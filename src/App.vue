@@ -1,28 +1,53 @@
 <template>
-  <div id="app">
-    <img alt="Vue logo" src="./assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js App" />
-  </div>
+  <v-app toolbar>
+    <v-app-bar app color="primary" dark>
+      <div class="d-flex align-center">
+        <!-- <v-img
+          alt="Vuetify Logo"
+          class="shrink mr-2"
+          contain
+          src="https://cdn.vuetifyjs.com/images/logos/vuetify-logo-dark.png"
+          transition="scale-transition"
+          width="40"
+        />-->
+
+        <v-toolbar-title>УРОВНИ ВОДЫ НА ГИДРОПОСТАХ</v-toolbar-title>
+        
+      </div>
+
+      <v-spacer></v-spacer>
+      <!-- <v-btn text>Request test data</v-btn> -->
+      <!-- <v-btn  text
+      >
+        <span class="mr-2">Latest Release</span>
+         <v-icon>mdi-open-in-new</v-icon> 
+      </v-btn> -->
+    </v-app-bar>
+
+    <v-content >
+      <vue-map></vue-map>
+    </v-content>
+  </v-app>
 </template>
 
 <script>
-import HelloWorld from "./components/HelloWorld.vue";
+import VueMap from "./components/Map";
 
 export default {
   name: "App",
+
   components: {
-    HelloWorld
+    VueMap
+  },
+  data() {
+    return {
+      //
+    };
   }
 };
 </script>
-
-<style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-  margin-top: 60px;
-}
+<style >
+html{
+      overflow-y: hidden;
+    }
 </style>
