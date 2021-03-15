@@ -12,19 +12,37 @@
         />-->
 
         <v-toolbar-title>УРОВНИ ВОДЫ НА ГИДРОПОСТАХ</v-toolbar-title>
-        
       </div>
 
       <v-spacer></v-spacer>
+
+      <portal-target name="allStationButton">
+        <!--
+        This component can be located anywhere in your App.
+        The slot content of the above portal component will be rendered here.
+        -->
+      </portal-target>
+      <portal-target name="levelByButton">
+        <!--
+        This component can be located anywhere in your App.
+        The slot content of the above portal component will be rendered here.
+        -->
+      </portal-target>
+      <portal-target name="dynamicButton">
+        <!--
+        This component can be located anywhere in your App.
+        The slot content of the above portal component will be rendered here.
+        -->
+      </portal-target>
       <!-- <v-btn text>Request test data</v-btn> -->
       <!-- <v-btn  text
       >
         <span class="mr-2">Latest Release</span>
          <v-icon>mdi-open-in-new</v-icon> 
-      </v-btn> -->
+      </v-btn>-->
     </v-app-bar>
 
-    <v-content >
+    <v-content>
       <vue-map></vue-map>
     </v-content>
   </v-app>
@@ -47,7 +65,7 @@ export default {
 };
 </script>
 <style >
-html{
-      overflow-y: hidden;
-    }
+html {
+  overflow-y: hidden;
+}
 </style>

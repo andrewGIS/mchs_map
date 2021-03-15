@@ -1,5 +1,20 @@
 <template>
   <v-container fluid>
+    <portal to="allStationButton">
+      <v-btn text v-if="!showAnimationControl" @click="setStandartStyle">
+        <v-icon left>mdi-filter-remove</v-icon>Показать все станции
+      </v-btn>
+    </portal>
+    <portal to="levelByButton">
+      <v-btn text v-if="!showAnimationControl" @click="setLimitStyle">
+        <v-icon left>mdi-flash-alert</v-icon>НЯ и ОЯ за последний срок
+      </v-btn>
+    </portal>
+    <portal to="dynamicButton">
+      <v-btn text @click="toggleAnimationControl">
+        <v-icon left>mdi-timelapse</v-icon>Динамика
+      </v-btn>
+    </portal>
     <v-row justify="center">
       <v-dialog
         style="z-index:100000000"
@@ -10,35 +25,133 @@
         transition="dialog-bottom-transition"
       >
         <!-- <v-card> -->
-          <highcharts ref="highcharts" :options="chartOptions"></highcharts>
+        <highcharts ref="highcharts" :options="chartOptions"></highcharts>
         <!-- </v-card> -->
       </v-dialog>
-      <v-container fluid style="height:86vh">
+      <v-container fluid style="height:86vh;">
         <l-map :center="[59,59]" :zoom="6">
+          <l-control position="bottomright" v-if="showAnimationControl">
+            <v-card max-width="280" outlined>
+              <v-card-title>Информация о анимации</v-card-title>
+              <v-card-text>
+                Cтанции, где уровень не превысил НЯ, помечены желтым цветом. Чем больше круг тем ближе значения уровня воды на выбранную дату к уровню НЯ.
+                <br />Станции, где уровень превысил НЯ, показаны красным. Чем больше круг, тем дальше отметка уровня воды от уровня НЯ
+              </v-card-text>
+            </v-card>
+          </l-control>
+          <l-control position="topright">
+            <v-container fluid>
+              <!-- <v-row v-if="!showAnimationControl">
+                <v-col>
+                  <v-btn @click="setStandartStyle">Показать все станции</v-btn>
+                </v-col>
+              </v-row>
+
+              <v-row v-if="!showAnimationControl">
+                <v-col>
+                  <v-btn @click="setLimitStyle">НЯ и ОЯ за последний срок</v-btn>
+                </v-col>
+              </v-row>
+              <v-row v-if="!showAnimationControl">
+                <v-col>
+                  <v-btn @click="toggleAnimationControl">Динамика</v-btn>
+                </v-col>
+              </v-row>-->
+              <v-row v-if="showAnimationControl" align="stretch" justify="end">
+                <v-tooltip top>
+                  <template v-slot:activator="{ on }">
+                    <v-btn icon @click="toggleAnimationControl()" v-on="on">
+                      <v-icon :size="25">mdi-close</v-icon>
+                    </v-btn>
+                  </template>
+                  <span>Закрыть анимацию</span>
+                </v-tooltip>
+              </v-row>
+              <v-row v-if="showAnimationControl" no-gutters align="baseline" justify="end">
+                <v-col cols="1">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        icon
+                        @click="prevDate()"
+                        v-on="on"
+                        :disabled="isAnimation||selectedDateIndex===0"
+                      >
+                        <v-icon :size="25">mdi-skip-previous-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Предыдущая дата</span>
+                  </v-tooltip>
+                </v-col>
+                <v-col cols="5" style="z-index:1000;">
+                  <v-select solo :items="dates" v-model="selectedDate" :disabled="isAnimation"></v-select>
+                </v-col>
+                <v-col cols="1">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn
+                        icon
+                        @click="nextDate()"
+                        v-on="on"
+                        :disabled="isAnimation||selectedDateIndex===timeIntervals.length-1"
+                      >
+                        <v-icon class="group pa-2" :size="25">mdi-skip-next-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Следующая дата</span>
+                  </v-tooltip>
+                </v-col>
+                <v-col cols="1">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn icon @click="startAnimation()" v-on="on" :disabled="isAnimation">
+                        <v-icon>mdi-play-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Запустить анимацию</span>
+                  </v-tooltip>
+                </v-col>
+                <v-col cols="1">
+                  <v-tooltip top>
+                    <template v-slot:activator="{ on }">
+                      <v-btn @click="stopAnimation()" icon v-on="on" :disabled="!isAnimation">
+                        <v-icon>mdi-stop-circle-outline</v-icon>
+                      </v-btn>
+                    </template>
+                    <span>Остановить анимацию</span>
+                  </v-tooltip>
+                </v-col>
+              </v-row>
+            </v-container>
+          </l-control>
+          <!-- <b-form-group label="Individual radios">
+            <b-form-radio-group size="sm">
+            <template v-for="date in aviableDates">
+              <b-form-radio size="sm" :key="date" :value="date"></b-form-radio>
+            </template>
+            </b-form-radio-group>
+          </b-form-group>-->
+
           <!-- <v-btn text right absolute @click="requestRow" style="z-index:100000000;">Test request</v-btn> -->
-          <v-btn
-            right
-            absolute
-            @click="setStandartStyle"
-            style="z-index:100000000; margin-top:25px;"
-          >Показать все станции</v-btn>
-          <v-btn
-            right
-            absolute
-            @click="setLimitStyle"
-            style="z-index:100000000; margin-top:80px;"
-          >НЯ и ОЯ за последний срок</v-btn>
+
+          <!-- Анимация -->
+
+          <!-- control when not full display -->
+
+          <!-- Анимация -->
+
           <l-tile-layer :url="url"></l-tile-layer>
           <l-geo-json ref="geoJson" :geojson="gydroPostsLocations" :options="optionsGeoJSON"></l-geo-json>
         </l-map>
       </v-container>
+      
     </v-row>
   </v-container>
 </template>
 
 <script>
 import L from "leaflet";
-import { LMap, LTileLayer, LGeoJson } from "vue2-leaflet";
+import { LMap, LTileLayer, LGeoJson, LControl } from "vue2-leaflet";
 import { hydroPosts } from "../assets/gydroPostsLocation";
 //const  hydroPosts = hydroPosts
 import { Icon } from "leaflet";
@@ -68,7 +181,12 @@ export default {
       selectedNum: null,
       setStyle: false,
       recalcToRed: false,
-      zeroData: false
+      zeroData: false,
+      showAnimationControl: false,
+      selectedDate: null,
+      isAnimation: false,
+      timer: "",
+      request: null
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -95,7 +213,7 @@ export default {
           {
             name: "Уровень воды, см",
             data: this.clickedData.data
-          },
+          }
         ],
         yAxis: [
           {
@@ -112,7 +230,7 @@ export default {
                 width: 2, // Width of the line,
                 dashStyle: "shortdash",
                 label: {
-                  align:"right",
+                  align: "right",
                   text: `НЯ от "0" графика поста,  ${this.clickedData.yellowLimit} см`
                 },
                 zIndex: 1.5
@@ -160,6 +278,18 @@ export default {
         currentDate = currentDate.addDays(1);
       }
       return dateArray;
+    },
+    dates() {
+      // dates in format {
+      //  value:
+      //  text:
+      //}
+      return this.timeIntervals.map(date => {
+        return { text: date, value: date };
+      });
+    },
+    selectedDateIndex() {
+      return this.timeIntervals.indexOf(this.selectedDate);
     },
     clickedData() {
       if (this.CSVData && this.selectedNum) {
@@ -259,9 +389,43 @@ export default {
     }
   },
   methods: {
+    stopAnimation() {
+      clearInterval(this.timer);
+      this.isAnimation = false;
+      // cancelAnimationFrame(this.request)
+    },
+    startAnimation() {
+      this.isAnimation = true;
+      //this.request = requestAnimationFrame(this.animation)
+      let index = this.selectedDateIndex;
+      this.timer = setInterval(() => {
+        if (index < this.timeIntervals.length) {
+          this.selectedDate = this.timeIntervals[index];
+          index += 1;
+        }
+      }, 500);
+      // let index = this.selectedDateIndex;
+    },
+    nextDate() {
+      this.selectedDate = this.timeIntervals[this.selectedDateIndex + 1];
+    },
+    prevDate() {
+      this.selectedDate = this.timeIntervals[this.selectedDateIndex - 1];
+    },
+    toggleAnimationControl() {
+      if (this.showAnimationControl) this.setStandartStyle(); // set default style
+      this.showAnimationControl = this.showAnimationControl ? false : true;
+      this.selectedDate = this.selectedDate ? null : this.timeIntervals[0];
+    },
     async requestTableData() {
+      // const request = await fetch(
+      //   `https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv`
+      // );
+
+      //local 
+      //console.log(`${process.env.BASE_URL}data/data.csv`)
       const request = await fetch(
-        `https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv`
+        `${process.env.BASE_URL}data/data.csv`
       );
       const data = await request.text();
       // delete headers rows
@@ -349,7 +513,8 @@ export default {
             let stationData = this.CSVData.filter(
               row => parseInt(row[0]) === layer.feature.properties.N
             )[0];
-            // console.log(layer.feature.properties.N)
+
+            //console.log(layer.feature.properties.N)
             const datesValues = stationData.slice(7);
             let yellowLimit = parseFloat(stationData[4]);
             let redLimit = parseFloat(stationData[5]);
@@ -445,6 +610,60 @@ export default {
       });
     }
   },
+  watch: {
+    selectedDate: function() {
+      console.log("date change");
+      this.$nextTick(() => {
+        if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
+          this.$refs.geoJson.mapObject.eachLayer(layer => {
+            // define radius
+            const stationData = this.CSVData.filter(
+              row => parseInt(row[0]) === layer.feature.properties.N
+            )[0];
+            // console.log(layer.feature.properties.N)
+            const datesValues = stationData.slice(7);
+            const yellowLimit = parseFloat(stationData[4]);
+            const selectedLevelValue = datesValues[this.selectedDateIndex];
+            let style = {};
+            if (
+              yellowLimit === 0.0 ||
+              selectedLevelValue === 0.0 ||
+              selectedLevelValue < 0.0 ||
+              (selectedLevelValue > -1 && selectedLevelValue < 1)
+            ) {
+              style = {
+                radius: 0.01,
+                fillColor: "#ff7800",
+                color: "#000",
+                weight: 0,
+                opacity: 0.01,
+                fillOpacity: 0.01
+              };
+            } else if (
+              yellowLimit !== 0.0 &&
+              selectedLevelValue !== 0 &&
+              selectedLevelValue > 0
+            ) {
+              style = {
+                radius:
+                  yellowLimit >= selectedLevelValue
+                    ? (1 - (yellowLimit - selectedLevelValue) / yellowLimit) *
+                      10
+                    : 10 +
+                      ((selectedLevelValue - yellowLimit) / yellowLimit) * 5,
+                fillColor: yellowLimit > selectedLevelValue ? "yellow" : "red",
+                color: "#000",
+                weight: yellowLimit > selectedLevelValue ? 1 : 2,
+                opacity: 1,
+                fillOpacity: yellowLimit > selectedLevelValue ? 0.5 : 1
+              };
+            }
+            layer.setStyle(style);
+          });
+        }
+      });
+    }
+  },
   crated() {
     //this.requestTableData();
     // this.gydroPostsLocations = hydroPosts
@@ -455,9 +674,12 @@ export default {
       this.geoJson = this.$refs.geoJson.mapObject; // work as expected
     });
   },
-  components: { LMap, LTileLayer, LGeoJson }
+  components: { LMap, LTileLayer, LGeoJson, LControl }
 };
 </script>
 
 <style>
+.v-text-field.v-text-field--solo .v-input__control {
+  min-height: 10px;
+}
 </style>

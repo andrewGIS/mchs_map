@@ -16,19 +16,19 @@ export const hydroPosts = {
         coordinates: [56.788886294067368, 59.383319880208489],
       },
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 75.0,
-        District: "Нытвенский МР",
-        stream: "ГТС на р.Нытва в Нытва",
-        Settlement: "Нытва",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [55.323572148336154, 57.935058098152865],
-      },
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 490.0,
+    //     District: "Нытвенский МР",
+    //     stream: "ГТС на р.Нытва в Нытва",
+    //     Settlement: "Нытва",
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [55.323572148336154, 57.935058098152865],
+    //   },
+    // },
     {
       type: "Feature",
       properties: {
@@ -237,19 +237,19 @@ export const hydroPosts = {
         coordinates: [57.436405896914778, 59.485473732027287],
       },
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 66.0,
-        District: "Юрлинский МО",
-        stream: "р.Лопва",
-        Settlement: "Юрла",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.313106293620706, 59.326609126610094],
-      },
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 66.0,
+    //     District: "Юрлинский МО",
+    //     stream: "р.Лопва",
+    //     Settlement: "Юрла",
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.313106293620706, 59.326609126610094],
+    //   },
+    // },
     {
       type: "Feature",
       properties: {
@@ -1147,19 +1147,19 @@ export const hydroPosts = {
         coordinates: [57.798061210656499, 58.309960827630277],
       },
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 65.0,
-        District: "Чернушинский ГО",
-        stream: "р.Сульмашка",
-        Settlement: "Рябки",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.24012930572303, 56.572856593956828],
-      },
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 65.0,
+    //     District: "Чернушинский ГО",
+    //     stream: "р.Сульмашка",
+    //     Settlement: "Рябки",
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.24012930572303, 56.572856593956828],
+    //   },
+    // },
     {
       type: "Feature",
       properties: {
@@ -1251,19 +1251,19 @@ export const hydroPosts = {
         coordinates: [55.269769197890355, 57.522496511604913],
       },
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 83.0,
-        District: "Октябрьский  МР",
-        stream: "р.Ирень",
-        Settlement: "Ишимово",
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.801534976258324, 56.66340612469304],
-      },
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 83.0,
+    //     District: "Октябрьский  МР",
+    //     stream: "р.Ирень",
+    //     Settlement: "Ишимово",
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.801534976258324, 56.66340612469304],
+    //   },
+    // },
     {
       type: "Feature",
       properties: {
