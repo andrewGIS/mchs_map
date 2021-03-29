@@ -11,7 +11,11 @@
           width="40"
         />-->
 
-        <v-toolbar-title>УРОВНИ ВОДЫ НА ГИДРОПОСТАХ</v-toolbar-title>
+        <v-toolbar-title>
+          МОНИТОРИНГ ПРОХОЖДЕНИЯ ВЕСЕННЕГО
+          <br />
+          ПОЛОВОДЬЯ НА ТЕРРИТОРИИ ПК НА ВВП
+        </v-toolbar-title>
       </div>
 
       <v-spacer></v-spacer>
@@ -64,7 +68,7 @@ export default {
   }
 };
 </script>
-<style >
+<style>
 html {
   overflow-y: hidden;
 }
