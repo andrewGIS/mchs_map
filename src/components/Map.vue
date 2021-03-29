@@ -230,6 +230,7 @@ export default {
   },
   computed: {
     chartOptions() {
+      var ctx = this;
       return {
         lang: {
           noData: "No data"
@@ -311,9 +312,44 @@ export default {
             if (this.series.name === "Уровень воды 2021, см") {
               date = new Date(this.x);
               date.setFullYear(2021);
+
+              const dateIdx = ctx.dates2021.indexOf(this.x);
+              const damagedHouses = ctx.selectedRowData
+                .slice(1)
+                .filter((value, idx) => {
+                  if (idx % 5 === 0) return value;
+                });
+
+              const damagedPopulation = ctx.selectedRowData
+                .slice(2)
+                .filter((value, idx) => {
+                  if (idx % 5 === 0) return value;
+                });
+
+              const damagedKids = ctx.selectedRowData
+                .slice(3)
+                .filter((value, idx) => {
+                  if (idx % 5 === 0) return value;
+                });
+
+              const maxPossibleDamagedHouses = ctx.selectedRowData
+                .slice(4)
+                .filter((value, idx) => {
+                  if (idx % 5 === 0) return value;
+                });
+
               return `Уровень воды 2021, см: ${new Date(
-                date - 3600 * 5 * 1000
-              ).toLocaleString()}:${this.y}`;
+                date - 3600 * 5 * 1000 // shift date for display correct time in UTC +0500 zone
+              ).toLocaleString()}:${this.y} 
+              <br>Количество поврежденных домов - ${damagedHouses[dateIdx]}
+              <br>Количество населения в зоне подтопления - ${
+                damagedPopulation[dateIdx]
+              }
+              <br>Количество детей в зоне подтопления - ${damagedKids[dateIdx]}
+              <br>Количество зданий зоне подтопления - ${
+                maxPossibleDamagedHouses[dateIdx]
+              }
+              `;
             } else {
               date = new Date(this.x);
               date.setFullYear(2020);
@@ -373,7 +409,6 @@ export default {
         selectedRow = this.CSV2021Data.filter(
           row => row[0] == this.selectedNum
         )[0];
-        console.log(selectedRow);
 
         // In table for each dates 5 values are preseneted
         // water level, damaged houses count, damaged children (2 cols), damaged houses count
@@ -496,6 +531,11 @@ export default {
           });
         }
       };
+    },
+    selectedRowData() {
+      return this.CSV2021Data.filter(
+        row => row[0] == this.selectedNum
+      )[0].slice(8);
     }
   },
   methods: {
