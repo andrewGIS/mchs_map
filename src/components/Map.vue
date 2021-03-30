@@ -194,6 +194,7 @@ import { hydroPosts } from "../assets/gydroPostsLocation";
 import { addHydroPosts } from "../assets/addGydroPostsLocation";
 //const  hydroPosts = hydroPosts
 import { Icon } from "leaflet";
+import { data } from "../../addData";
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -224,7 +225,9 @@ export default {
       showAnimationControl: false,
       selectedDate: null,
       isAnimation: false,
-      timer: ""
+      timer: "",
+      addData: data,
+      clickedLayer: ""
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -294,6 +297,7 @@ export default {
         ],
         xAxis: [
           {
+            //type: this.clickedLayer === "BaseLayer" ? "datetime" : "linear",
             type: "datetime",
             //categories: this.timeIntervals,
             labels: {
@@ -302,45 +306,49 @@ export default {
             title: {
               text: "Сроки измерения"
             },
-            min: 8150400000,
-            max: 12938400000
+            min: this.clickedLayer === "BaseLayer" ? 8150400000 : null,
+            max: this.clickedLayer === "BaseLayer" ? 12938400000 : null
+            //min: 8150400000,
+            //max: 12938400000
           }
         ],
         tooltip: {
           formatter: function() {
             let date;
-            if (this.series.name === "Уровень воды 2021, см") {
-              date = new Date(this.x);
-              date.setFullYear(2021);
+            switch (ctx.clickedLayer) {
+              case "BaseLayer":
+                if (this.series.name === "Уровень воды 2021, см") {
+                  date = new Date(this.x);
+                  date.setFullYear(2021);
 
-              const dateIdx = ctx.dates2021.indexOf(this.x);
-              const damagedHouses = ctx.selectedRowData
-                .slice(1)
-                .filter((value, idx) => {
-                  if (idx % 5 === 0) return value;
-                });
+                  const dateIdx = ctx.dates2021.indexOf(this.x);
+                  const damagedHouses = ctx.selectedRowData
+                    .slice(1)
+                    .filter((value, idx) => {
+                      if (idx % 5 === 0) return value;
+                    });
 
-              const damagedPopulation = ctx.selectedRowData
-                .slice(2)
-                .filter((value, idx) => {
-                  if (idx % 5 === 0) return value;
-                });
+                  const damagedPopulation = ctx.selectedRowData
+                    .slice(2)
+                    .filter((value, idx) => {
+                      if (idx % 5 === 0) return value;
+                    });
 
-              const damagedKids = ctx.selectedRowData
-                .slice(3)
-                .filter((value, idx) => {
-                  if (idx % 5 === 0) return value;
-                });
+                  const damagedKids = ctx.selectedRowData
+                    .slice(3)
+                    .filter((value, idx) => {
+                      if (idx % 5 === 0) return value;
+                    });
 
-              const maxPossibleDamagedHouses = ctx.selectedRowData
-                .slice(4)
-                .filter((value, idx) => {
-                  if (idx % 5 === 0) return value;
-                });
+                  const maxPossibleDamagedHouses = ctx.selectedRowData
+                    .slice(4)
+                    .filter((value, idx) => {
+                      if (idx % 5 === 0) return value;
+                    });
 
-              return `Уровень воды 2021, см: ${new Date(
-                date - 3600 * 5 * 1000 // shift date for display correct time in UTC +0500 zone
-              ).toLocaleString()}:${this.y} 
+                  return `Уровень воды 2021, см: ${new Date(
+                    date - 3600 * 5 * 1000 // shift date for display correct time in UTC +0500 zone
+                  ).toLocaleString()}:${this.y} 
               <br>Количество поврежденных домов - ${damagedHouses[dateIdx]}
               <br>Количество населения в зоне подтопления - ${
                 damagedPopulation[dateIdx]
@@ -350,12 +358,19 @@ export default {
                 maxPossibleDamagedHouses[dateIdx]
               }
               `;
-            } else {
-              date = new Date(this.x);
-              date.setFullYear(2020);
-              return `Уровень воды 2020, см: ${new Date(
-                date - 3600 * 5 * 1000
-              ).toLocaleString()}:${this.y}`;
+                } else {
+                  date = new Date(this.x);
+                  date.setFullYear(2020);
+                  return `Уровень воды 2020, см: ${new Date(
+                    date - 3600 * 5 * 1000
+                  ).toLocaleString()}:${this.y}`;
+                }
+              case "ESIMO":
+                date = new Date(this.x);
+                date.setFullYear(2021);
+                return `${new Date(date - 3600 * 5 * 1000).toLocaleString()}:${
+                  this.y
+                }`;
             }
           }
         }
@@ -379,75 +394,130 @@ export default {
       return this.timeIntervals.indexOf(this.selectedDate);
     },
     clickedData() {
-      if (this.CSV2020Data && this.CSV2021Data && this.selectedNum) {
-        let result = {};
-        let selectedRow;
-        let waterLevels;
-        let nonNanArray;
-        let maxValue;
+      switch (this.clickedLayer) {
+        case "BaseLayer":
+          if (this.CSV2020Data && this.CSV2021Data && this.selectedNum) {
+            let result = {};
+            let selectedRow;
+            let waterLevels;
+            let nonNanArray;
+            let maxValue;
 
-        // 2020 Data
-        selectedRow = this.CSV2020Data.filter(
-          row => row[0] == this.selectedNum
-        )[0];
-        waterLevels = selectedRow.slice(7).map(value => parseFloat(value));
-        // 2021 measure starts from 05.04.2021,
-        // 2020 measures started from 17.04.2021
-        // shift values for graph and fill with value
-        // const shiftCount = 12;
-        // const fillValue = NaN;
-        // waterLevels.unshift(
-        //   ...Array.from({ length: shiftCount }, () => fillValue)
-        // );
-        waterLevels = waterLevels.map((value, idx) => {
-          return [this.dates2020[idx], value];
-        });
-        //nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-        result.oldData = waterLevels;
+            // 2020 Data
+            selectedRow = this.CSV2020Data.filter(
+              row => row[0] == this.selectedNum
+            )[0];
+            waterLevels = selectedRow.slice(7).map(value => parseFloat(value));
+            // 2021 measure starts from 05.04.2021,
+            // 2020 measures started from 17.04.2021
+            // shift values for graph and fill with value
+            // const shiftCount = 12;
+            // const fillValue = NaN;
+            // waterLevels.unshift(
+            //   ...Array.from({ length: shiftCount }, () => fillValue)
+            // );
+            waterLevels = waterLevels.map((value, idx) => {
+              return [this.dates2020[idx], value];
+            });
+            //nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+            result.oldData = waterLevels;
 
-        // 2021 data
-        selectedRow = this.CSV2021Data.filter(
-          row => row[0] == this.selectedNum
-        )[0];
+            // 2021 data
+            selectedRow = this.CSV2021Data.filter(
+              row => row[0] == this.selectedNum
+            )[0];
 
-        // In table for each dates 5 values are preseneted
-        // water level, damaged houses count, damaged children (2 cols), damaged houses count
-        // for extracting water levels we extract only each fifth value
-        waterLevels = selectedRow.slice(8).filter((value, idx) => {
-          if (idx % 5 === 0) return value;
-        });
+            // In table for each dates 5 values are preseneted
+            // water level, damaged houses count, damaged children (2 cols), damaged houses count
+            // for extracting water levels we extract only each fifth value
+            waterLevels = selectedRow.slice(8).filter((value, idx) => {
+              if (idx % 5 === 0) return value;
+            });
 
-        nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-        maxValue = Math.max(...nonNanArray);
+            nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+            maxValue = Math.max(...nonNanArray);
 
-        waterLevels = waterLevels.map((value, idx) => {
-          return [this.dates2021[idx], parseFloat(value)];
-        });
-        console.log(waterLevels);
+            waterLevels = waterLevels.map((value, idx) => {
+              return [this.dates2021[idx], parseFloat(value)];
+            });
 
-        const yellowLimitValue = parseFloat(selectedRow[5]);
-        const redLimitValue = parseFloat(selectedRow[6]);
-        // set limit lines
+            const yellowLimitValue = parseFloat(selectedRow[5]);
+            const redLimitValue = parseFloat(selectedRow[6]);
+            // set limit lines
 
-        const maxObservedValue =
-          maxValue > redLimitValue ? maxValue + 100 : redLimitValue;
+            const maxObservedValue =
+              maxValue > redLimitValue ? maxValue + 100 : redLimitValue;
 
-        result.data = waterLevels;
-        result.title = `Номер в списке: ${selectedRow[0]}, Название: ${selectedRow[2]}`;
-        result.yellowLimit = yellowLimitValue;
-        result.redLimit = redLimitValue;
-        result.maxValue = maxObservedValue;
+            result.data = waterLevels;
+            result.title = `Номер в списке: ${selectedRow[0]}, Название: ${selectedRow[2]}`;
+            result.yellowLimit = yellowLimitValue;
+            result.redLimit = redLimitValue;
+            result.maxValue = maxObservedValue;
 
-        return result;
-      } else {
-        return {
-          oldData: [],
-          data: [],
-          title: "",
-          yellowLimit: 0,
-          redLImit: 0,
-          maxValue: 0
-        };
+            return result;
+          } else {
+            return {
+              oldData: [],
+              data: [],
+              title: "",
+              yellowLimit: 0,
+              redLImit: 0,
+              maxValue: 0
+            };
+          }
+        case "ESIMO":
+          var selectedStation;
+          this.addData.forEach(e => {
+            if (e.aaData[0] && e.aaData[0][0] === this.selectedNum) {
+              selectedStation = e.aaData;
+              return;
+            }
+          });
+
+          if (!selectedStation) {
+            return {
+              oldData: [],
+              data: [],
+              title: [],
+              yellowLimit: 0,
+              redLImit: 0,
+              maxValue: 0
+            };
+          }
+
+          // Column were data with water levels is stored
+          var levelWaterColIdx = 5;
+
+          var waterLevels = selectedStation.map(e => {
+            return [
+              new Date(e[4]) - new Date(2021, 0, 1),
+              parseFloat(e[levelWaterColIdx])
+            ];
+            //return parseFloat(e[levelWaterColIdx]);
+          });
+
+          var nonNanArray = waterLevels.filter(
+            value => !Number.isNaN(value[1])
+          );
+          var maxValue = Math.max(...nonNanArray.map(value => value[1]));
+
+          return {
+            oldData: [],
+            data: selectedStation ? waterLevels : [],
+            title: selectedStation[0][1],
+            yellowLimit: 0,
+            redLImit: 0,
+            maxValue
+          };
+        default:
+          return {
+            oldData: [],
+            data: [],
+            title: [],
+            yellowLimit: 0,
+            redLImit: 0,
+            maxValue: 0
+          };
       }
     },
     optionsGeoJSON() {
@@ -493,10 +563,11 @@ export default {
           layer.bindTooltip(tooltipContent);
           layer.on({
             click: e => {
-              //this.selectedNum = e.target.feature.properties.N;
-              //this.dialog = true;
+              this.clickedLayer = "ESIMO";
+              this.selectedNum = e.target.feature.properties.m4200;
+              this.dialog = true;
               //console.log(e.target.feature.properties.m4200);
-              this.getAddDataInfo(e.target.feature.properties.m4200);
+              //this.getAddDataInfo(e.target.feature.properties.m4200);
               // layer.openPopup("Hi!");
               // e.layer.setStyle({
               //   weight: 5
@@ -521,6 +592,7 @@ export default {
           layer.bindTooltip(tooltipContent);
           layer.on({
             click: e => {
+              this.clickedLayer = "BaseLayer";
               this.selectedNum = e.target.feature.properties.N;
               this.dialog = true;
               // layer.openPopup("Hi!");
@@ -775,34 +847,6 @@ export default {
           });
         }
       });
-    },
-    async getAddDataInfo(number) {
-      console.log(
-        `http://esimo.ru/dataview/getresourcetable?filter=(m4400 between '2021-03-20' and '2021-03-22')&resourceId=RU_RIHMI-WDC_1325_1&sSearch=${number}`
-      );
-
-      var myHeaders = new Headers();
-      //myHeaders.append('Content-Type', 'application/json');
-      //myHeaders.append('Referer', 'http://esimo.ru/dataview/viewresource?resourceId=RU_RIHMI-WDC_1325')
-      //myHeaders.append('Accept', 'application/json, text/javascript, */*; q=0.01');
-      //myHeaders.append('user-agent', 'PostmanRuntime/7.26.10')
-
-      //myHeaders.append("Cookie", "JSESSIONID=E44F4EAC621947B242064EB2856BB296");
-
-      var requestOptions = {
-        method: "POST",
-        headers: myHeaders,
-        // redirect: "follow",
-        mode: "no-cors"
-      };
-
-      fetch(
-        "http://esimo.ru/dataview/getresourcetable?filter=(m4400 between '2021-03-20' and '2021-03-22')&resourceId=RU_RIHMI-WDC_1325_1&sSearch=76087",
-        requestOptions
-      )
-        .then(response => response)
-        .then(result => console.log(result))
-        .catch(error => console.log("error", error));
     }
   },
   watch: {
