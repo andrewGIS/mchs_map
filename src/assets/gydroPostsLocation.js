@@ -94,19 +94,19 @@ export const hydroPosts = {
         coordinates: [55.586838109391408, 57.009782834610292]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 42.0,
-        District: "Кунгурский МР",
-        stream: "р. Сылва",
-        Settlement: "Филипповка"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [57.011406381599386, 57.434407258888029]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 42.0,
+    //     District: "Кунгурский МР",
+    //     stream: "р. Сылва",
+    //     Settlement: "Филипповка"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [57.011406381599386, 57.434407258888029]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -211,32 +211,32 @@ export const hydroPosts = {
         coordinates: [56.215889779689746, 56.585774830843945]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 102.0,
-        District: "Александровский МО",
-        stream: "р. Яйва База",
-        Settlement: "База"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [57.322967219861482, 59.427251032809068]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        N: 101.0,
-        District: "Александровский МО",
-        stream: "р. Яйва Камень",
-        Settlement: "Камень"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [57.436405896914778, 59.485473732027287]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 102.0,
+    //     District: "Александровский МО",
+    //     stream: "р. Яйва База",
+    //     Settlement: "База"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [57.322967219861482, 59.427251032809068]
+    //   }
+    // },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 101.0,
+    //     District: "Александровский МО",
+    //     stream: "р. Яйва Камень",
+    //     Settlement: "Камень"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [57.436405896914778, 59.485473732027287]
+    //   }
+    // },
     // {
     //   type: "Feature",
     //   properties: {
@@ -666,19 +666,19 @@ export const hydroPosts = {
         coordinates: [56.329580576282751, 57.433103523409045]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 44.0,
-        District: "Кунгурский МР",
-        stream: "р. Бабка",
-        Settlement: "Липово"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.862828684896044, 57.456007094851714]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 44.0,
+    //     District: "Кунгурский МР",
+    //     stream: "р. Бабка",
+    //     Settlement: "Липово"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.862828684896044, 57.456007094851714]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1069,19 +1069,19 @@ export const hydroPosts = {
         coordinates: [56.941401023038964, 57.432693481119429]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 48.0,
-        District: "ГО Кунгур",
-        stream: "ВЗД р.Шаква",
-        Settlement: "Кунгур"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.942524244798221, 57.457433684017474]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 48.0,
+    //     District: "ГО Кунгур",
+    //     stream: "ВЗД р.Шаква",
+    //     Settlement: "Кунгур"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.942524244798221, 57.457433684017474]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1290,19 +1290,19 @@ export const hydroPosts = {
         coordinates: [54.595078907765526, 57.660475462372858]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 87.0,
-        District: "Бардымский  МР",
-        stream: "р. Тулва",
-        Settlement: "Барда"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [55.622822043902374, 56.938475867467503]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 87.0,
+    //     District: "Бардымский  МР",
+    //     stream: "р. Тулва",
+    //     Settlement: "Барда"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [55.622822043902374, 56.938475867467503]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {

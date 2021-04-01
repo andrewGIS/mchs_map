@@ -1,5 +1,8 @@
 <template>
   <v-container fluid>
+    <v-overlay :value="processing" :z-index="10000">
+      <v-progress-circular indeterminate color="red"></v-progress-circular
+    >Загружаем данные</v-overlay>
     <portal to="allStationButton">
       <v-btn text v-if="!showAnimationControl" @click="setStandartStyle">
         <v-icon left>mdi-filter-remove</v-icon>Показать все станции
@@ -181,6 +184,38 @@
             :geojson="AddGydroPostsLocations"
             :options="optionsGeoJSON"
           ></l-geo-json>
+          <l-control :position="'bottomleft'">
+            <v-card>
+              <v-col>
+                <v-row>
+                  <svg height="20" width="20">
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="7"
+                      stroke="black"
+                      stroke-width="1"
+                      fill="#ff7800"
+                    />
+                  </svg>
+                  <span style="padding-right: 5px;">- базовые посты наблюдения </span>
+                </v-row>
+                <v-row>
+                  <svg height="20" width="20">
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="7"
+                      stroke="black"
+                      stroke-width="1"
+                      fill="#4ED8F5"
+                    />
+                  </svg>
+                  - точки наблюдения ЕСИМО
+                </v-row>
+              </v-col>
+            </v-card>
+          </l-control>
         </l-map>
       </v-container>
     </v-row>
@@ -227,7 +262,8 @@ export default {
       isAnimation: false,
       timer: "",
       addData: data,
-      clickedLayer: ""
+      clickedLayer: "",
+      processing: false
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -246,7 +282,7 @@ export default {
           }
         },
         legend: {
-          enabled: false
+          enabled: true
         },
         title: {
           text: this.clickedData.title
@@ -254,7 +290,10 @@ export default {
         series: [
           {
             name: "Уровень воды 2020, см",
-            data: this.clickedData.oldData
+            data: this.clickedData.oldData,
+            accessibility: {
+              enabled: false
+            }
           },
           {
             name: "Уровень воды 2021, см",
@@ -346,9 +385,9 @@ export default {
                       if (idx % 5 === 0) return value;
                     });
 
-                  return `Уровень воды 2021, см: ${new Date(
+                  return `Уровень воды 2021, см: <br> на ${new Date(
                     date - 3600 * 5 * 1000 // shift date for display correct time in UTC +0500 zone
-                  ).toLocaleString()}:${this.y} 
+                  ).toLocaleString()}:<b>${this.y}</b> 
               <br>Количество поврежденных домов - ${damagedHouses[dateIdx]}
               <br>Количество населения в зоне подтопления - ${
                 damagedPopulation[dateIdx]
@@ -430,9 +469,10 @@ export default {
             // In table for each dates 5 values are preseneted
             // water level, damaged houses count, damaged children (2 cols), damaged houses count
             // for extracting water levels we extract only each fifth value
-            waterLevels = selectedRow.slice(8).filter((value, idx) => {
-              if (idx % 5 === 0) return value;
-            });
+            waterLevels = selectedRow
+              .slice(8)
+              .filter((value, idx) => idx % 5 === 0);
+            waterLevels = waterLevels.map(value => parseFloat(value));
 
             nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
             maxValue = Math.max(...nonNanArray);
@@ -499,7 +539,7 @@ export default {
           var nonNanArray = waterLevels.filter(
             value => !Number.isNaN(value[1])
           );
-          var maxValue = Math.max(...nonNanArray.map(value => value[1]));
+          var maxValue = Math.max(...nonNanArray.map(value => value[1])) + 100;
 
           return {
             oldData: [],
@@ -654,6 +694,7 @@ export default {
       this.selectedDate = this.selectedDate ? null : this.timeIntervals[0];
     },
     async requestTableData() {
+      this.processing = true;
       let data;
       const r2020Data = await fetch(
         `https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv`
@@ -671,6 +712,7 @@ export default {
       //local
       //console.log(`${process.env.BASE_URL}data/data.csv`)
       //const request = await fetch(`${process.env.BASE_URL}data/data.csv`);
+      this.processing = false;
     },
     CSVToArray(strData, strDelimiter) {
       // Check to see if the delimiter is defined. If not,
@@ -749,22 +791,28 @@ export default {
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
-            let stationData = this.CSVData.filter(
+            //this.$refs.geoJson.mapObject.setStyle(layer => {
+            let stationData = this.CSV2021Data.filter(
               row => parseInt(row[0]) === layer.feature.properties.N
             )[0];
 
-            //console.log(layer.feature.properties.N)
-            const datesValues = stationData.slice(7);
-            let yellowLimit = parseFloat(stationData[4]);
-            let redLimit = parseFloat(stationData[5]);
+            let datesValues = stationData
+              .slice(8)
+              .filter((_, idx) => idx % 5 === 0);
+            datesValues = datesValues.map(value => parseFloat(value));
+            let yellowLimit = parseFloat(stationData[5]);
+            let redLimit = parseFloat(stationData[6]);
             // get last non empty value
-            let lastNonZeroValue = parseFloat(
-              datesValues[datesValues.indexOf("") - 1]
-            );
+            // let lastNonZeroValue = parseFloat(
+            //   datesValues[datesValues.indexOf("") - 1]
+            // );
             const nonNanArray = datesValues.filter(
               value => !Number.isNaN(value)
             );
-            const maxValue = Math.max(...nonNanArray);
+
+            let lastNonZeroValue = nonNanArray.slice(-1)[0];
+            const maxValue =
+              nonNanArray.length === 0 ? 0.0 : Math.max(...nonNanArray);
             let style;
             // if between yellow and red return yellow
             // if above red return red
@@ -908,6 +956,7 @@ export default {
     this.$nextTick(() => {
       this.geoJson = this.$refs.geoJson.mapObject; // work as expected
     });
+
   },
   components: { LMap, LTileLayer, LGeoJson, LControl }
 };
