@@ -296,7 +296,8 @@ export default {
             data: this.clickedData.oldData,
             accessibility: {
               enabled: false
-            }
+            },
+            color: "#A0A0A0"
           },
           {
             name: "Уровень воды 2021, см",
