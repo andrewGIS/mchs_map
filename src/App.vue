@@ -32,7 +32,7 @@
         The slot content of the above portal component will be rendered here.
         -->
       </portal-target>
-      <!-- <portal-target name="dynamicButton"></portal-target> -->
+      <portal-target name="dynamicButton"></portal-target>
       <!-- <v-btn text>Request test data</v-btn> -->
       <!-- <v-btn  text
       >

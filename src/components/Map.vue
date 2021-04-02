@@ -1,8 +1,9 @@
 <template>
   <v-container fluid>
     <v-overlay :value="processing" :z-index="10000">
-      <v-progress-circular indeterminate color="red"></v-progress-circular
-    >Загружаем данные</v-overlay>
+      <v-progress-circular indeterminate color="red"></v-progress-circular>
+      Загружаем данные
+    </v-overlay>
     <portal to="allStationButton">
       <v-btn text v-if="!showAnimationControl" @click="setStandartStyle">
         <v-icon left>mdi-filter-remove</v-icon>Показать все станции
@@ -99,7 +100,7 @@
                 <v-col cols="5" style="z-index: 1000">
                   <v-select
                     solo
-                    :items="dates"
+                    :items="dates2021Formatted"
                     v-model="selectedDate"
                     :disabled="isAnimation"
                   ></v-select>
@@ -198,7 +199,9 @@
                       fill="#ff7800"
                     />
                   </svg>
-                  <span style="padding-right: 5px;">- базовые посты наблюдения </span>
+                  <span style="padding-right: 5px;"
+                    >- базовые посты наблюдения
+                  </span>
                 </v-row>
                 <v-row>
                   <svg height="20" width="20">
@@ -430,7 +433,7 @@ export default {
       );
     },
     selectedDateIndex() {
-      return this.timeIntervals.indexOf(this.selectedDate);
+      return this.dates2021.indexOf(this.selectedDate);
     },
     clickedData() {
       switch (this.clickedLayer) {
@@ -648,6 +651,19 @@ export default {
       return this.CSV2021Data.filter(
         row => row[0] == this.selectedNum
       )[0].slice(8);
+    },
+    dates2021Formatted() {
+      return this.dates2021.map(value =>
+        //shift date for display correct time in UTC +0500 zone
+        {
+          let date = new Date(value);
+          date.setFullYear(2021);
+          return {
+            text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
+            value
+          };
+        }
+      );
     }
   },
   methods: {
@@ -676,22 +692,22 @@ export default {
       let index = this.selectedDateIndex;
       this.timer = setInterval(() => {
         if (index < this.timeIntervals.length) {
-          this.selectedDate = this.timeIntervals[index];
+          this.selectedDate = this.dates2021[index];
           index += 1;
         }
       }, 500);
       // let index = this.selectedDateIndex;
     },
     nextDate() {
-      this.selectedDate = this.timeIntervals[this.selectedDateIndex + 1];
+      this.selectedDate = this.dates2021[this.selectedDateIndex + 1];
     },
     prevDate() {
-      this.selectedDate = this.timeIntervals[this.selectedDateIndex - 1];
+      this.selectedDate = this.dates2021[this.selectedDateIndex - 1];
     },
     toggleAnimationControl() {
       if (this.showAnimationControl) this.setStandartStyle(); // set default style
       this.showAnimationControl = this.showAnimationControl ? false : true;
-      this.selectedDate = this.selectedDate ? null : this.timeIntervals[0];
+      this.selectedDate = this.selectedDate ? null : this.dates2021[0];
     },
     async requestTableData() {
       this.processing = true;
@@ -902,14 +918,18 @@ export default {
       console.log("date change");
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
+        //if (this.$refs.geoJson) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
             // define radius
-            const stationData = this.CSVData.filter(
+            const stationData = this.CSV2021Data.filter(
               row => parseInt(row[0]) === layer.feature.properties.N
             )[0];
-            // console.log(layer.feature.properties.N)
-            const datesValues = stationData.slice(7);
-            const yellowLimit = parseFloat(stationData[4]);
+            let datesValues = stationData
+              .slice(8)
+              .filter((value, idx) => idx % 5 === 0);
+            datesValues = datesValues.map(value => parseFloat(value));
+            //const datesValues = stationData.slice(8);
+            const yellowLimit = parseFloat(stationData[6]);
             const selectedLevelValue = datesValues[this.selectedDateIndex];
             let style = {};
             if (
@@ -956,7 +976,6 @@ export default {
     this.$nextTick(() => {
       this.geoJson = this.$refs.geoJson.mapObject; // work as expected
     });
-
   },
   components: { LMap, LTileLayer, LGeoJson, LControl }
 };
