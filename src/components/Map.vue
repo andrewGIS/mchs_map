@@ -114,7 +114,7 @@
                         v-on="on"
                         :disabled="
                           isAnimation ||
-                            selectedDateIndex === timeIntervals.length - 1
+                            selectedDateIndex === dates2021.length - 1
                         "
                       >
                         <v-icon class="group pa-2" :size="25"
@@ -232,7 +232,7 @@ import { hydroPosts } from "../assets/gydroPostsLocation";
 import { addHydroPosts } from "../assets/addGydroPostsLocation";
 //const  hydroPosts = hydroPosts
 import { Icon } from "leaflet";
-import { data } from "../../addData";
+// import { data } from process.env.BASE_URL+"public/addData.js";
 
 delete Icon.Default.prototype._getIconUrl;
 Icon.Default.mergeOptions({
@@ -264,7 +264,7 @@ export default {
       selectedDate: null,
       isAnimation: false,
       timer: "",
-      addData: data,
+      addData: null,
       clickedLayer: "",
       processing: false
     };
@@ -692,7 +692,7 @@ export default {
       //this.request = requestAnimationFrame(this.animation)
       let index = this.selectedDateIndex;
       this.timer = setInterval(() => {
-        if (index < this.timeIntervals.length) {
+        if (index < this.dates2021.length) {
           this.selectedDate = this.dates2021[index];
           index += 1;
         }
@@ -713,6 +713,11 @@ export default {
     async requestTableData() {
       this.processing = true;
       let data;
+
+      const addData = await fetch(`${process.env.BASE_URL}data/addData.json`);
+      data = await addData.json();
+      this.addData = data.data;
+
       const r2020Data = await fetch(
         `https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv`
       );
@@ -920,7 +925,7 @@ export default {
       console.log("date change");
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
-        //if (this.$refs.geoJson) {
+          //if (this.$refs.geoJson) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
             // define radius
             const stationData = this.CSV2021Data.filter(
@@ -929,7 +934,11 @@ export default {
             let datesValues = stationData
               .slice(8)
               .filter((value, idx) => idx % 5 === 0);
+
             datesValues = datesValues.map(value => parseFloat(value));
+            datesValues = datesValues.map(value =>
+              Number.isNaN(value) ? 0 : value
+            );
             //const datesValues = stationData.slice(8);
             const yellowLimit = parseFloat(stationData[6]);
             const selectedLevelValue = datesValues[this.selectedDateIndex];
