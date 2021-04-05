@@ -720,7 +720,7 @@ export default {
       this.CSV2020Data = this.CSVToArray(data).slice(4);
 
       const r2021Data = await fetch(
-        `https://docs.google.com/spreadsheets/d/1c0Ga0bjHiI5koj5YdSfrVLq3yQXYPAGD/gviz/tq?tqx=out:csv&range=A6:VF127`
+        `https://docs.google.com/spreadsheets/d/1c0Ga0bjHiI5koj5YdSfrVLq3yQXYPAGD/gviz/tq?tqx=out:csv&range=A6:VF128`
       );
       data = await r2021Data.text();
       this.CSV2021Data = this.CSVToArray(data);
@@ -812,6 +812,7 @@ export default {
             let stationData = this.CSV2021Data.filter(
               row => parseInt(row[0]) === layer.feature.properties.N
             )[0];
+            console.log(layer.feature.properties.N);
 
             let datesValues = stationData
               .slice(8)
