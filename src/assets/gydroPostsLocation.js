@@ -679,19 +679,19 @@ export const hydroPosts = {
     //     coordinates: [56.862828684896044, 57.456007094851714]
     //   }
     // },
-    {
-      type: "Feature",
-      properties: {
-        N: 74.0,
-        District: "Кунгурский МР",
-        stream: "р. Сылва",
-        Settlement: "Сылвенск"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.913992796030868, 57.46520884201459]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 74.0,
+    //     District: "Кунгурский МР",
+    //     stream: "р. Сылва",
+    //     Settlement: "Сылвенск"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.913992796030868, 57.46520884201459]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1522,6 +1522,19 @@ export const hydroPosts = {
       geometry: {
         type: "Point",
         coordinates: [56.120408809319258, 57.976925462240445]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 150.0,
+        District: "Чайковский ГО",
+        stream: "р. Кама",
+        Settlement: "Ольховка"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.0222, 56.7346]
       }
     }
   ]
