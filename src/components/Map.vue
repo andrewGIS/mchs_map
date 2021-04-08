@@ -272,7 +272,8 @@ export default {
       timer: "",
       addData: null,
       clickedLayer: "",
-      processing: false
+      processing: false,
+      settedLimitedStyle: false
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -685,7 +686,18 @@ export default {
       };
     },
     pointToLayerLabel() {
-      if (this.zoom > 7) {
+      if (!this.showLabels) {
+        return (feature, latlng) => {
+          return L.circleMarker(latlng, {
+            fillColor: "#ff7800",
+            radius: 0,
+            color: "#000",
+            weight: 1,
+            opacity: 0.0,
+            fillOpacity: 0.0
+          });
+        };
+      } else {
         return (feature, latlng) => {
           let label = String(feature.properties.Settlement);
           return L.circleMarker(latlng, {
@@ -694,7 +706,7 @@ export default {
             color: "#000",
             weight: 1,
             opacity: 0.01,
-            fillOpacity: 0.8
+            fillOpacity: 0.0
           })
             .bindTooltip(label, {
               direction: "bottom",
@@ -704,17 +716,17 @@ export default {
             })
             .openTooltip();
         };
+      }
+    },
+    showLabels() {
+      if (
+        this.zoom > 8 &&
+        !this.showAnimationControl &&
+        !this.settedLimitedStyle
+      ) {
+        return true;
       } else {
-        return (feature, latlng) => {
-          return L.circleMarker(latlng, {
-            fillColor: "#ff7800",
-            radius: 0,
-            color: "#000",
-            weight: 1,
-            opacity: 0.01,
-            fillOpacity: 0.8
-          });
-        };
+        return false;
       }
     }
   },
@@ -857,6 +869,7 @@ export default {
       return arrData;
     },
     setLimitStyle() {
+      this.settedLimitedStyle = true;
       // middle (yellow level of danger)
       // 4 column  index of this value 4
       // red (red level of danger)
@@ -941,6 +954,7 @@ export default {
       });
     },
     setValueStyle() {
+      //this.settedLimtedStyle = true;
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
@@ -957,6 +971,12 @@ export default {
       });
     },
     setStandartStyle() {
+      this.settedLimitedStyle = false;
+      // if (this.zoom > 8) {
+      //   this.showLabels = true;
+      // } else {
+      //   this.showLabels = false;
+      // }
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
@@ -1039,7 +1059,7 @@ export default {
     }
   },
   mounted() {
-    console.log(hydroPosts.features.length);
+    //console.log(hydroPosts.features.length);
     this.requestTableData();
     // this.$nextTick(() => {
     //   this.geoJson = this.$refs.geoJson.mapObject; // work as expected
