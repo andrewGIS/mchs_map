@@ -71,7 +71,7 @@ export const hydroPosts = {
     {
       type: "Feature",
       properties: {
-        N: 6.0,
+        N: 7.0,
         District: "Бардымский МО",
         stream: "р.р. Тулва, Тунтор",
         Settlement: "Усть-Тунтор"
@@ -123,7 +123,7 @@ export const hydroPosts = {
     {
       type: "Feature",
       properties: {
-        N: 7.0,
+        N: 8.0,
         District: "Бардымский МО",
         stream: "р. Тулва",
         Settlement: "Чалково"
@@ -136,7 +136,7 @@ export const hydroPosts = {
     {
       type: "Feature",
       properties: {
-        N: 4.0,
+        N: 6.0,
         District: "Бардымский МО",
         stream: "р. Казьмакты",
         Settlement: "Барда"
@@ -237,19 +237,19 @@ export const hydroPosts = {
     //     coordinates: [57.436405896914778, 59.485473732027287]
     //   }
     // },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 66.0,
-    //     District: "Юрлинский МО",
-    //     stream: "р.Лопва",
-    //     Settlement: "Юрла",
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [54.313106293620706, 59.326609126610094],
-    //   },
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 66.0,
+        District: "Юрлинский МО",
+        stream: "р.Лопва",
+        Settlement: "Юрла"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.313106293620706, 59.326609126610094]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -968,7 +968,7 @@ export const hydroPosts = {
     {
       type: "Feature",
       properties: {
-        N: 8.0,
+        N: 9.0,
         District: "Бардымский МО",
         stream: "р. Тулва",
         Settlement: "Краснояр-2"
@@ -1082,19 +1082,19 @@ export const hydroPosts = {
     //     coordinates: [56.942524244798221, 57.457433684017474]
     //   }
     // },
-    {
-      type: "Feature",
-      properties: {
-        N: 52.0,
-        District: "Пермский МР",
-        stream: "р. Мулянка",
-        Settlement: "дорога на Шумки"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [55.966761017307249, 57.909016623018886]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 52.0,
+    //     District: "Пермский МР",
+    //     stream: "р. Мулянка",
+    //     Settlement: "дорога на Шумки"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [55.966761017307249, 57.909016623018886]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1290,19 +1290,19 @@ export const hydroPosts = {
         coordinates: [54.595078907765526, 57.660475462372858]
       }
     },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 87.0,
-    //     District: "Бардымский  МР",
-    //     stream: "р. Тулва",
-    //     Settlement: "Барда"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [55.622822043902374, 56.938475867467503]
-    //   }
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 4.0,
+        District: "Бардымский  МР",
+        stream: "р. Тулва",
+        Settlement: "Барда"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.622822043902374, 56.938475867467503]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -1535,6 +1535,136 @@ export const hydroPosts = {
       geometry: {
         type: "Point",
         coordinates: [54.0222, 56.7346]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 149.0,
+        District: "Суксунский ГО",
+        stream: "р. Сылва",
+        Settlement: "Тис"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [57.613082, 57.009284]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 143.0,
+        District: "Пермский ГО",
+        stream: "р. Мулянка",
+        Settlement: "Субботино"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.17472, 57.93472]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 133.0,
+        District: "Кунгурский ГО",
+        stream: "р. Сылва",
+        Settlement: "Беркутово"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [57.019134, 57.42945]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 138.0,
+        District: "Лысьвенский ГО",
+        stream: "р. Чусовая",
+        Settlement: "Кын"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [58.65138889, 57.86694444]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 126.0,
+        District: "Кудымкарский ГО",
+        stream: "р. Кува",
+        Settlement: "Першина"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.4464, 59.1002]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 121.0,
+        District: "Гайнский ГО",
+        stream: "р. Лолог",
+        Settlement: "Сергеевский"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.319769, 60.015531]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 122.0,
+        District: "Гайнский ГО",
+        stream: "р. Весляна",
+        Settlement: "Оныл"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [53.660879, 60.410919]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 123.0,
+        District: "Гайнский ГО",
+        stream: "р. Весляна",
+        Settlement: "Сосновая"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [53.84239, 60.355956]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 120.0,
+        District: "Гайнский ГО",
+        stream: "р. Кама, р. Весляна",
+        Settlement: "Усть-Черная"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [52.673607, 60.482897]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 151.0,
+        District: "Чернушинский ГО",
+        stream: "р. Большой Танып",
+        Settlement: "Гидропост на р Б.Танып"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.1, 56.493333]
       }
     }
   ]

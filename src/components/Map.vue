@@ -994,9 +994,9 @@ export default {
   mounted() {
     console.log(hydroPosts.features.length);
     this.requestTableData();
-    this.$nextTick(() => {
-      this.geoJson = this.$refs.geoJson.mapObject; // work as expected
-    });
+    // this.$nextTick(() => {
+    //   this.geoJson = this.$refs.geoJson.mapObject; // work as expected
+    // });
   },
   components: { LMap, LTileLayer, LGeoJson, LControl }
 };
