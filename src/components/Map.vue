@@ -33,7 +33,7 @@
         <!-- </v-card> -->
       </v-dialog>
       <v-container fluid style="height: 86vh">
-        <l-map :center="[59, 59]" :zoom="6">
+        <l-map :center="[59, 59]" :zoom="zoom" @update:zoom="zoomUpdate">
           <l-control position="bottomright" v-if="showAnimationControl">
             <v-card max-width="280" outlined>
               <v-card-title>Информация о анимации</v-card-title>
@@ -181,6 +181,11 @@
             :options="optionsGeoJSON"
           ></l-geo-json>
           <l-geo-json
+            ref="labelgeoJson"
+            :geojson="gydroPostsLocations"
+            :options="optionLabels"
+          ></l-geo-json>
+          <l-geo-json
             ref="geoJsonAdd"
             :geojson="AddGydroPostsLocations"
             :options="optionsGeoJSON"
@@ -250,6 +255,7 @@ Date.prototype.addDays = function(days) {
 export default {
   data() {
     return {
+      zoom: 6,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       gydroPostsLocations: hydroPosts,
       AddGydroPostsLocations: addHydroPosts,
@@ -672,6 +678,44 @@ export default {
           };
         }
       );
+    },
+    optionLabels() {
+      return {
+        pointToLayer: this.pointToLayerLabel
+      };
+    },
+    pointToLayerLabel() {
+      if (this.zoom > 7) {
+        return (feature, latlng) => {
+          let label = String(feature.properties.Settlement);
+          return L.circleMarker(latlng, {
+            fillColor: "#ff7800",
+            radius: 0,
+            color: "#000",
+            weight: 1,
+            opacity: 0.01,
+            fillOpacity: 0.8
+          })
+            .bindTooltip(label, {
+              direction: "bottom",
+              permanent: true,
+              // opacity: 0.7,
+              className: "my-labels"
+            })
+            .openTooltip();
+        };
+      } else {
+        return (feature, latlng) => {
+          return L.circleMarker(latlng, {
+            fillColor: "#ff7800",
+            radius: 0,
+            color: "#000",
+            weight: 1,
+            opacity: 0.01,
+            fillOpacity: 0.8
+          });
+        };
+      }
     }
   },
   methods: {
@@ -927,6 +971,9 @@ export default {
           });
         }
       });
+    },
+    zoomUpdate(zoom) {
+      this.zoom = zoom;
     }
   },
   watch: {
@@ -1005,5 +1052,15 @@ export default {
 <style>
 .v-text-field.v-text-field--solo .v-input__control {
   min-height: 10px;
+}
+.leaflet-tooltip.my-labels {
+  /* background-color: transparent; */
+  border: transparent;
+  box-shadow: none;
+  padding: unset;
+  border: unset;
+}
+.leaflet-tooltip-bottom:before {
+  border: unset !important;
 }
 </style>
