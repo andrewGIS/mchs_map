@@ -441,6 +441,7 @@ export default {
         case "BaseLayer":
           if (this.CSV2020Data && this.CSV2021Data && this.selectedNum) {
             let result = {};
+            result.oldData = [];
             let selectedRow;
             let waterLevels;
             let nonNanArray;
@@ -449,8 +450,19 @@ export default {
             // 2020 Data
             selectedRow = this.CSV2020Data.filter(
               row => row[0] == this.selectedNum
-            )[0];
-            waterLevels = selectedRow.slice(7).map(value => parseFloat(value));
+            );
+            if (selectedRow.length !== 0) {
+              selectedRow = selectedRow[0];
+              waterLevels = selectedRow
+                .slice(7)
+                .map(value => parseFloat(value));
+              waterLevels = waterLevels.map((value, idx) => {
+                return [this.dates2020[idx], value];
+              });
+              result.oldData = waterLevels;
+              //nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+            }
+
             // 2021 measure starts from 05.04.2021,
             // 2020 measures started from 17.04.2021
             // shift values for graph and fill with value
@@ -459,11 +471,6 @@ export default {
             // waterLevels.unshift(
             //   ...Array.from({ length: shiftCount }, () => fillValue)
             // );
-            waterLevels = waterLevels.map((value, idx) => {
-              return [this.dates2020[idx], value];
-            });
-            //nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-            result.oldData = waterLevels;
 
             // 2021 data
             selectedRow = this.CSV2021Data.filter(
@@ -835,7 +842,7 @@ export default {
             );
 
             let lastNonZeroValue = nonNanArray.slice(-1)[0];
-            console.log(lastNonZeroValue, yellowLimit, redLimit);
+            //console.log(lastNonZeroValue, yellowLimit, redLimit);
             const maxValue =
               nonNanArray.length === 0 ? 0.0 : Math.max(...nonNanArray);
             let style;
@@ -985,6 +992,7 @@ export default {
     }
   },
   mounted() {
+    console.log(hydroPosts.features.length);
     this.requestTableData();
     this.$nextTick(() => {
       this.geoJson = this.$refs.geoJson.mapObject; // work as expected

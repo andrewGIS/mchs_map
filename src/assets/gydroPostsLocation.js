@@ -3,32 +3,32 @@ export const hydroPosts = {
   name: "hydroPosts",
   crs: { type: "name", properties: { name: "urn:ogc:def:crs:OGC:1.3:CRS84" } },
   features: [
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 10.0,
-    //     District: "ГО Березники",
-    //     stream: "р. Зырянка",
-    //     Settlement: "Березники"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [56.788886294067368, 59.383319880208489]
-    //   }
-    // },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 490.0,
-    //     District: "Нытвенский МР",
-    //     stream: "ГТС на р.Нытва в Нытва",
-    //     Settlement: "Нытва",
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [55.323572148336154, 57.935058098152865],
-    //   },
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 119.0,
+        District: "ГО Березники",
+        stream: "р. Зырянка",
+        Settlement: "Березники"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.788886294067368, 59.383319880208489]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 75.0,
+        District: "Нытвенский МР",
+        stream: "ГТС на р.Нытва в Нытва",
+        Settlement: "Нытва"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.323572148336154, 57.935058098152865]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -84,7 +84,7 @@ export const hydroPosts = {
     {
       type: "Feature",
       properties: {
-        N: 9.0,
+        N: 10.0,
         District: "Бардымский МО",
         stream: "р.р. Чириз, Тулва",
         Settlement: "Ишимово"
@@ -201,7 +201,7 @@ export const hydroPosts = {
     {
       type: "Feature",
       properties: {
-        N: 64.0,
+        N: 65.0,
         District: "Чернушинский ГО",
         stream: "ГТС р. Сульмашка",
         Settlement: "Рябки"
@@ -900,19 +900,19 @@ export const hydroPosts = {
         coordinates: [55.656750052672976, 57.999101857165158]
       }
     },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 49.0,
-    //     District: "Пермский МР",
-    //     stream: "р. Бабка",
-    //     Settlement: "Кукуштан",
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [56.496875210722578, 57.647184184902358],
-    //   },
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 49.0,
+        District: "Пермский МР",
+        stream: "р. Бабка",
+        Settlement: "Кукуштан"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.496875210722578, 57.647184184902358]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -1147,19 +1147,19 @@ export const hydroPosts = {
         coordinates: [57.798061210656499, 58.309960827630277]
       }
     },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 65.0,
-    //     District: "Чернушинский ГО",
-    //     stream: "р.Сульмашка",
-    //     Settlement: "Рябки",
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [56.24012930572303, 56.572856593956828],
-    //   },
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 64.0,
+        District: "Чернушинский ГО",
+        stream: "р.Сульмашка",
+        Settlement: "Рябки"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.24012930572303, 56.572856593956828]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -1251,19 +1251,19 @@ export const hydroPosts = {
         coordinates: [55.269769197890355, 57.522496511604913]
       }
     },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 83.0,
-    //     District: "Октябрьский  МР",
-    //     stream: "р.Ирень",
-    //     Settlement: "Ишимово",
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [56.801534976258324, 56.66340612469304],
-    //   },
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 83.0,
+        District: "Октябрьский  МР",
+        stream: "р.Ирень",
+        Settlement: "Ишимово"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.801534976258324, 56.66340612469304]
+      }
+    },
     {
       type: "Feature",
       properties: {
