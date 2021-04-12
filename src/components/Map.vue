@@ -243,7 +243,7 @@
                       fill="#ff7800"
                     />
                   </svg>
-                  <span style="padding-right: 5px;"
+                  <span style="padding-right: 5px"
                     >- базовые посты наблюдения
                   </span>
                 </v-row>
@@ -439,12 +439,16 @@ export default {
                   return `Уровень воды 2021, см: <br> на ${new Date(
                     date - 3600 * 5 * 1000 // shift date for display correct time in UTC +0500 zone
                   ).toLocaleString()}:<b>${this.y}</b> 
-              <br>Количество поврежденных домов - ${damagedHouses[dateIdx]}
-              <br>Количество населения в зоне подтопления - ${
+              <br>Количество подтопленных жилых домов - ${
+                damagedHouses[dateIdx]
+              }
+              <br>Количество населения в зоне подтопления (общее) - ${
                 damagedPopulation[dateIdx]
               }
-              <br>Количество детей в зоне подтопления - ${damagedKids[dateIdx]}
-              <br>Количество зданий зоне подтопления - ${
+              <br>Количество населения в зоне подтопления (детей) - ${
+                damagedKids[dateIdx]
+              }
+              <br>Количество участков, приусадебных территорий в зоне подтопления - ${
                 maxPossibleDamagedHouses[dateIdx]
               }
               `;
