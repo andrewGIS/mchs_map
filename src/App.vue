@@ -1,8 +1,8 @@
 <template>
   <v-app toolbar>
     <v-app-bar app color="primary" dark>
-      <div class="d-flex align-center">
-        <!-- <v-img
+      <!-- <div class="d-flex align-center"> -->
+      <!-- <v-img
           alt="Vuetify Logo"
           class="shrink mr-2"
           contain
@@ -11,12 +11,12 @@
           width="40"
         />-->
 
-        <v-toolbar-title>
-          МОНИТОРИНГ ПРОХОЖДЕНИЯ ВЕСЕННЕГО
-          <br />
-          ПОЛОВОДЬЯ НА ТЕРРИТОРИИ ПК НА ВРЕМЕННЫХ ВОДОМЕРНЫХ ПОСТАХ
-        </v-toolbar-title>
-      </div>
+      <v-toolbar-title class=".d-none .d-sm-flex">
+        МОНИТОРИНГ ПРОХОЖДЕНИЯ ВЕСЕННЕГО
+        <br />
+        ПОЛОВОДЬЯ НА ТЕРРИТОРИИ ПК НА ВРЕМЕННЫХ ВОДОМЕРНЫХ ПОСТАХ
+      </v-toolbar-title>
+      <!-- </div> -->
 
       <v-spacer></v-spacer>
 

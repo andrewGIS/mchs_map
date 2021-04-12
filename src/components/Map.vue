@@ -5,18 +5,51 @@
       Загружаем данные
     </v-overlay>
     <portal to="allStationButton">
-      <v-btn text v-if="!showAnimationControl" @click="setStandartStyle">
+      <v-btn
+        text
+        v-if="!showAnimationControl && !$vuetify.breakpoint.xsOnly"
+        @click="setStandartStyle"
+      >
         <v-icon left>mdi-filter-remove</v-icon>Показать все станции
+      </v-btn>
+      <v-btn
+        icon
+        v-if="!showAnimationControl && $vuetify.breakpoint.xsOnly"
+        @click="setStandartStyle"
+      >
+        <v-icon left>mdi-filter-remove</v-icon>
       </v-btn>
     </portal>
     <portal to="levelByButton">
-      <v-btn text v-if="!showAnimationControl" @click="setLimitStyle">
+      <v-btn
+        text
+        v-if="!showAnimationControl && !$vuetify.breakpoint.xsOnly"
+        @click="setLimitStyle"
+      >
         <v-icon left>mdi-flash-alert</v-icon>НЯ и ОЯ за последний срок
+      </v-btn>
+      <v-btn
+        icon
+        v-if="!showAnimationControl && $vuetify.breakpoint.xsOnly"
+        @click="setLimitStyle"
+      >
+        <v-icon left>mdi-flash-alert</v-icon>
       </v-btn>
     </portal>
     <portal to="dynamicButton">
-      <v-btn text @click="toggleAnimationControl">
+      <v-btn
+        v-if="!$vuetify.breakpoint.xsOnly"
+        text
+        @click="toggleAnimationControl"
+      >
         <v-icon left>mdi-timelapse</v-icon>Динамика
+      </v-btn>
+      <v-btn
+        icon
+        v-if="$vuetify.breakpoint.xsOnly"
+        @click="toggleAnimationControl"
+      >
+        <v-icon left>mdi-timelapse</v-icon>
       </v-btn>
     </portal>
     <v-row justify="center">
@@ -34,9 +67,15 @@
       </v-dialog>
       <v-container fluid style="height: 86vh">
         <l-map :center="[59, 59]" :zoom="zoom" @update:zoom="zoomUpdate">
-          <l-control position="bottomright" v-if="showAnimationControl">
-            <v-card max-width="280" outlined>
-              <v-card-title>Информация о анимации</v-card-title>
+          <l-control
+            position="bottomright"
+            v-if="showAnimationControl && infoShow"
+          >
+            <v-card max-width="300" outlined>
+              <v-card-title
+                >Информация о анимации
+                <v-icon @click="infoShow = !infoShow">mdi-close</v-icon>
+              </v-card-title>
               <v-card-text>
                 Cтанции, где уровень не превысил НЯ, помечены желтым цветом. Чем
                 больше круг тем ближе значения уровня воды на выбранную дату к
@@ -256,6 +295,7 @@ export default {
   data() {
     return {
       zoom: 6,
+      infoShow: true,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       gydroPostsLocations: hydroPosts,
       AddGydroPostsLocations: addHydroPosts,
@@ -772,6 +812,7 @@ export default {
       if (this.showAnimationControl) this.setStandartStyle(); // set default style
       this.showAnimationControl = this.showAnimationControl ? false : true;
       this.selectedDate = this.selectedDate ? null : this.dates2021[0];
+      this.infoShow = true;
     },
     async requestTableData() {
       this.processing = true;
@@ -787,8 +828,12 @@ export default {
       data = await r2020Data.text();
       this.CSV2020Data = this.CSVToArray(data).slice(4);
 
+      // const r2021Data = await fetch(
+      //   `https://docs.google.com/spreadsheets/d/1c0Ga0bjHiI5koj5YdSfrVLq3yQXYPAGD/gviz/tq?tqx=out:csv&range=A6:VF150`
+      // );
+      // link new
       const r2021Data = await fetch(
-        `https://docs.google.com/spreadsheets/d/1c0Ga0bjHiI5koj5YdSfrVLq3yQXYPAGD/gviz/tq?tqx=out:csv&range=A6:VF150`
+        `https://docs.google.com/spreadsheets/d/1inv46ksTI-945BjGIWr2SKpiQ4-5Oxy3Ce3-h1QMa40/gviz/tq?tqx=out:csv&range=A6:VF150`
       );
       data = await r2021Data.text();
       this.CSV2021Data = this.CSVToArray(data);
