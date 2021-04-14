@@ -229,6 +229,11 @@
             :geojson="AddGydroPostsLocations"
             :options="optionsGeoJSON"
           ></l-geo-json>
+          <l-geo-json
+            ref="GTS"
+            :geojson="GTSData"
+            :options="optionsGeoJSON"
+          ></l-geo-json>
           <l-control :position="'bottomleft'">
             <v-card>
               <v-col>
@@ -260,6 +265,19 @@
                   </svg>
                   - точки наблюдения ЕСИМО
                 </v-row>
+                <v-row>
+                  <svg height="20" width="20">
+                    <circle
+                      cx="10"
+                      cy="10"
+                      r="7"
+                      stroke="black"
+                      stroke-width="1"
+                      fill="#4245f5"
+                    />
+                  </svg>
+                  - ГТС ПК
+                </v-row>
               </v-col>
             </v-card>
           </l-control>
@@ -274,6 +292,7 @@ import L from "leaflet";
 import { LMap, LTileLayer, LGeoJson, LControl } from "vue2-leaflet";
 import { hydroPosts } from "../assets/gydroPostsLocation";
 import { addHydroPosts } from "../assets/addGydroPostsLocation";
+import { GTS } from "../assets/GTS";
 //const  hydroPosts = hydroPosts
 import { Icon } from "leaflet";
 // import { data } from process.env.BASE_URL+"public/addData.js";
@@ -313,7 +332,8 @@ export default {
       addData: null,
       clickedLayer: "",
       processing: false,
-      settedLimitedStyle: false
+      settedLimitedStyle: false,
+      GTSData: GTS
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -641,11 +661,23 @@ export default {
             opacity: 1,
             fillOpacity: 0.8
           });
-        } else {
+        } else if (
+          Object.prototype.hasOwnProperty.call(feature.properties, "N")
+        ) {
           // Base layer style
           return L.circleMarker(latlng, {
             radius: 5,
             fillColor: "#ff7800",
+            color: "#000",
+            weight: 1,
+            opacity: 1,
+            fillOpacity: 0.8
+          });
+        } else {
+          // GTS layer
+          return L.circleMarker(latlng, {
+            radius: 5,
+            fillColor: "#4245f5",
             color: "#000",
             weight: 1,
             opacity: 1,
@@ -676,8 +708,10 @@ export default {
               // })
             }
           });
+        } else if (
+          Object.prototype.hasOwnProperty.call(feature.properties, "N")
+        ) {
           // Base layer style
-        } else {
           const tooltipContent =
             "<div>" +
             `Номер в списке : <b>${feature.properties.N}</b>` +
@@ -703,6 +737,11 @@ export default {
               // })
             }
           });
+        } else {
+          // GTS layer
+          const tooltipContent =
+            "<div>" + `Название: <b>${feature.properties.Name}</b>` + "<div>";
+          layer.bindTooltip(tooltipContent);
         }
       };
     },
