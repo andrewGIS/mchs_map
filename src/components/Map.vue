@@ -230,6 +230,7 @@
             :options="optionsGeoJSON"
           ></l-geo-json>
           <l-geo-json
+            :visible="GTSVisible"
             ref="GTS"
             :geojson="GTSData"
             :options="optionsGeoJSON"
@@ -265,19 +266,30 @@
                   </svg>
                   - точки наблюдения ЕСИМО
                 </v-row>
-                <v-row>
-                  <svg height="20" width="20">
-                    <circle
-                      cx="10"
-                      cy="10"
-                      r="7"
-                      stroke="black"
-                      stroke-width="1"
-                      fill="#4245f5"
-                    />
-                  </svg>
-                  - ГТС ПК
-                </v-row>
+                 <v-tooltip right>
+                  <template v-slot:activator="{ on, attrs }">
+                    <v-row
+                      class="GTSLayer"
+                      :class="[GTSVisible ? 'layer_enabled' : 'layer_disabled']"
+                      @click="GTSVisible = !GTSVisible"
+                      v-bind="attrs"
+                      v-on="on"
+                    >
+                      <svg height="20" width="20">
+                        <circle
+                          cx="10"
+                          cy="10"
+                          r="7"
+                          stroke="black"
+                          stroke-width="1"
+                          fill="#4245f5"
+                        />
+                      </svg>
+                      - ГТС ПК
+                    </v-row>
+                  </template>
+                  <span>Нажмите чтобы включить/отключить слой</span>
+              </v-tooltip>
               </v-col>
             </v-card>
           </l-control>
@@ -333,7 +345,8 @@ export default {
       clickedLayer: "",
       processing: false,
       settedLimitedStyle: false,
-      GTSData: GTS
+      GTSData: GTS,
+      GTSVisible: false
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -1170,5 +1183,14 @@ export default {
 }
 .leaflet-tooltip-bottom:before {
   border: unset !important;
+}
+.GTSLayer:hover {
+  cursor: pointer;
+}
+.layer_enabled {
+  color: black;
+}
+.layer_disabled {
+  color:#C8C8C8;
 }
 </style>
