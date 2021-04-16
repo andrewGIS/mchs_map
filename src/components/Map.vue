@@ -85,6 +85,7 @@
           <!-- <div v-for="station in stations" :key="station.id">
             {{ station.label }}
           </div> -->
+
           <v-autocomplete
             v-model="valuesMulti"
             :items="stations"
@@ -97,6 +98,9 @@
             item-text="label"
             item-value="id"
           ></v-autocomplete>
+          <div style="font-weight:600">
+            Курсор показывает уровень: {{ this.selectedLevel }}
+          </div>
         </v-card>
       </v-dialog>
       <v-dialog
@@ -393,7 +397,8 @@ export default {
       GTSData: GTS,
       GTSVisible: false,
       dialogMultiChart: false,
-      valuesMulti: []
+      valuesMulti: [],
+      selectedLevel: "-"
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -586,7 +591,47 @@ export default {
             /*max: this.clickedData.maxValue,*/
             title: {
               text: "Уровень воды, см"
-            }
+            },
+            plotLines: [
+              ...this.multiChartData.map(value => ({
+                color: "blue", // Color value
+                //dashStyle: "longdashdot", // Style of the plot line. Default to solid
+                value: value.level1, // Value of where the line will appear
+                width: 2,
+                dashStyle: "shortdash",
+                // label: {
+                //   text: `ОЯ от "0" графика поста, ${value.level1} см`
+                // },
+                zIndex: 1.5, // Width of the line
+                events: {
+                  mouseover: () => {
+                    this.selectedLevel = `НЯ от "0" графика поста, ${value.level1} см, ${value.name}`;
+                  },
+                  mouseout: () => {
+                    this.selectedLevel = "-";
+                  }
+                }
+              })),
+              ...this.multiChartData.map(value => ({
+                color: "red", // Color value
+                //dashStyle: "longdashdot", // Style of the plot line. Default to solid
+                value: value.level2, // Value of where the line will appear
+                width: 2,
+                dashStyle: "shortdash",
+                // label: {
+                //   text: `ОЯ от "0" графика поста, ${value.level2} см`
+                // },
+                zIndex: 1.5, // Width of the line
+                events: {
+                  mouseover: () => {
+                    this.selectedLevel = `ОЯ от "0" графика поста, ${value.level2} см, ${value.name}`;
+                  },
+                  mouseout: () => {
+                    this.selectedLevel = "-";
+                  }
+                }
+              }))
+            ]
             // ymax: this.clickedData.redLimit + 50,
           }
         ],
