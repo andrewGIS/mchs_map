@@ -26,6 +26,12 @@
         The slot content of the above portal component will be rendered here.
         -->
       </portal-target>
+      <portal-target name="MultiGraph">
+        <!--
+        This component can be located anywhere in your App.
+        The slot content of the above portal component will be rendered here.
+        -->
+      </portal-target>
       <portal-target name="levelByButton">
         <!--
         This component can be located anywhere in your App.

@@ -52,7 +52,53 @@
         <v-icon left>mdi-timelapse</v-icon>
       </v-btn>
     </portal>
+    <portal to="MultiGraph">
+      <v-btn
+        v-if="!$vuetify.breakpoint.xsOnly"
+        text
+        @click="dialogMultiChart = !dialogMultiChart"
+      >
+        <v-icon left>mdi-chart-histogram</v-icon> Несколько станций на графике
+      </v-btn>
+      <v-btn
+        icon
+        v-if="$vuetify.breakpoint.xsOnly"
+        @click="dialogMultiChart = !dialogMultiChart"
+      >
+        <v-icon left>mdi-chart-histogram</v-icon>
+      </v-btn>
+    </portal>
     <v-row justify="center">
+      <v-dialog
+        style="z-index: 100000000"
+        v-model="dialogMultiChart"
+        width="90%"
+        light
+        hide-overlay
+        transition="dialog-bottom-transition"
+      >
+        <v-card>
+          <highcharts
+            ref="highcharts"
+            :options="multiChartOptions"
+          ></highcharts>
+          <!-- <div v-for="station in stations" :key="station.id">
+            {{ station.label }}
+          </div> -->
+          <v-autocomplete
+            v-model="valuesMulti"
+            :items="stations"
+            outlined
+            dense
+            chips
+            small-chips
+            label="Выберите станции"
+            multiple
+            item-text="label"
+            item-value="id"
+          ></v-autocomplete>
+        </v-card>
+      </v-dialog>
       <v-dialog
         style="z-index: 100000000"
         v-model="dialog"
@@ -61,7 +107,6 @@
         hide-overlay
         transition="dialog-bottom-transition"
       >
-        <!-- <v-card> -->
         <highcharts ref="highcharts" :options="chartOptions"></highcharts>
         <!-- </v-card> -->
       </v-dialog>
@@ -266,7 +311,7 @@
                   </svg>
                   - точки наблюдения ЕСИМО
                 </v-row>
-                 <v-tooltip right>
+                <v-tooltip right>
                   <template v-slot:activator="{ on, attrs }">
                     <v-row
                       class="GTSLayer"
@@ -289,7 +334,7 @@
                     </v-row>
                   </template>
                   <span>Нажмите чтобы включить/отключить слой</span>
-              </v-tooltip>
+                </v-tooltip>
               </v-col>
             </v-card>
           </l-control>
@@ -346,7 +391,9 @@ export default {
       processing: false,
       settedLimitedStyle: false,
       GTSData: GTS,
-      GTSVisible: false
+      GTSVisible: false,
+      dialogMultiChart: false,
+      valuesMulti: []
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
@@ -502,6 +549,77 @@ export default {
           }
         }
       };
+    },
+    stations() {
+      return this.CSV2021Data.map(row => ({
+        id: row[0],
+        label: `${row[0]}, ${row[1]}, ${row[2]}`
+      }));
+    },
+    multiChartOptions() {
+      return {
+        chart: {
+          zoomType: "x"
+        },
+        lang: {
+          noData: "No data"
+        },
+        noData: {
+          style: {
+            fontWeight: "bold",
+            fontSize: "15px",
+            color: "#303030"
+          }
+        },
+        legend: {
+          enabled: true
+        },
+        title: {
+          text: this.clickedData.title
+        },
+        series: this.multiChartData.map(value => ({
+          name: value.name,
+          data: value.data
+        })),
+        yAxis: [
+          {
+            /*max: this.clickedData.maxValue,*/
+            title: {
+              text: "Уровень воды, см"
+            }
+            // ymax: this.clickedData.redLimit + 50,
+          }
+        ],
+        xAxis: [
+          {
+            //type: this.clickedLayer === "BaseLayer" ? "datetime" : "linear",
+            type: "datetime",
+            //categories: this.timeIntervals,
+            labels: {
+              enabled: false
+            },
+            title: {
+              text: "Сроки измерения"
+            },
+            min: 8150400000
+            //max: 12938400000
+            //min: 8150400000,
+            //max: 12938400000
+          }
+        ],
+        tooltip: {
+          formatter: function() {
+            let date;
+            date = new Date(this.x);
+            date.setFullYear(2021);
+            return `${new Date(date - 3600 * 5 * 1000).toLocaleString()}:
+            <br>Уровень воды:<b>${this.y}</b>`;
+          }
+        }
+      };
+    },
+    multiChartData() {
+      return this.valuesMulti.map(value => this.getStationData(value));
     },
     dates2020() {
       return this.timeIntervals(
@@ -827,6 +945,33 @@ export default {
     }
   },
   methods: {
+    getStationData(id) {
+      // 2021 data
+      let selectedRow = this.CSV2021Data.filter(row => row[0] == id)[0];
+
+      // In table for each dates 5 values are preseneted
+      // water level, damaged houses count, damaged children (2 cols), damaged houses count
+      // for extracting water levels we extract only each fifth value
+      let waterLevels = selectedRow
+        .slice(8)
+        .filter((value, idx) => idx % 5 === 0);
+      waterLevels = waterLevels.map(value => parseFloat(value));
+
+      waterLevels = waterLevels.map((value, idx) => {
+        return [this.dates2021[idx], parseFloat(value)];
+      });
+
+      const yellowLimitValue = parseFloat(selectedRow[5]);
+      const redLimitValue = parseFloat(selectedRow[6]);
+
+      return {
+        id: id,
+        name: `${selectedRow[1]}, ${selectedRow[2]}`,
+        data: waterLevels,
+        level1: yellowLimitValue,
+        level2: redLimitValue
+      };
+    },
     timeIntervals(startDate, endDate, baseDate) {
       // Shift in month index JS
       //let startDate = new Date(2021, 3, 5);
@@ -1191,6 +1336,6 @@ export default {
   color: black;
 }
 .layer_disabled {
-  color:#C8C8C8;
+  color: #c8c8c8;
 }
 </style>
