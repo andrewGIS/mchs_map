@@ -198,19 +198,19 @@ export const hydroPosts = {
         coordinates: [55.603012782414169, 56.454523916046071]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 65.0,
-        District: "Чернушинский ГО",
-        stream: "ГТС р. Сульмашка",
-        Settlement: "Рябки"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.215889779689746, 56.585774830843945]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 65.0,
+    //     District: "Чернушинский ГО",
+    //     stream: "ГТС р. Сульмашка",
+    //     Settlement: "Рябки"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.215889779689746, 56.585774830843945]
+    //   }
+    // },
     // {
     //   type: "Feature",
     //   properties: {
@@ -1394,19 +1394,19 @@ export const hydroPosts = {
         coordinates: [55.114355634704964, 56.399884061900082]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 99.0,
-        District: "Ординский МР",
-        stream: "р.Ясыл",
-        Settlement: "Андреевка"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.614173949768144, 57.075644038042071]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 99.0,
+    //     District: "Ординский МР",
+    //     stream: "р.Ясыл",
+    //     Settlement: "Андреевка"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.614173949768144, 57.075644038042071]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1537,19 +1537,19 @@ export const hydroPosts = {
         coordinates: [54.0222, 56.7346]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 149.0,
-        District: "Суксунский ГО",
-        stream: "р. Сылва",
-        Settlement: "Тис"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [57.613082, 57.009284]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 149.0,
+    //     District: "Суксунский ГО",
+    //     stream: "р. Сылва",
+    //     Settlement: "Тис"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [57.613082, 57.009284]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
