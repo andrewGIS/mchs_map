@@ -299,7 +299,7 @@
                     />
                   </svg>
                   <span style="padding-right: 5px"
-                    >- базовые посты наблюдения
+                    >- временные водомерные посты ОМСУ
                   </span>
                 </v-row>
                 <v-row>
@@ -745,17 +745,19 @@ export default {
             // In table for each dates 5 values are preseneted
             // water level, damaged houses count, damaged children (2 cols), damaged houses count
             // for extracting water levels we extract only each fifth value
-            waterLevels = selectedRow
-              .slice(8)
-              .filter((value, idx) => idx % 5 === 0);
-            waterLevels = waterLevels.map(value => parseFloat(value));
-            nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-            maxValue = Math.max(...nonNanArray);
+            if (selectedRow && selectedRow.length !== 0) {
+              waterLevels = selectedRow
+                  .slice(8)
+                  .filter((value, idx) => idx % 5 === 0);
+              waterLevels = waterLevels.map(value => parseFloat(value));
+              nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+              maxValue = Math.max(...nonNanArray);
 
-            waterLevels = waterLevels.map((value, idx) => {
-              return [this.dates2022[idx], parseFloat(value)];
-            });
-            result.data2021 = waterLevels
+              waterLevels = waterLevels.map((value, idx) => {
+                return [this.dates2022[idx], parseFloat(value)];
+              });
+              result.data2021 = waterLevels
+            }
 
             // 2022 data
             selectedRow = this.CSV2022Data.filter(
@@ -1135,7 +1137,7 @@ export default {
       // Delete header columns and get only level waters (every 5 columns)
 
       const r2022Data = await fetch(
-          `https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF152`
+          `https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF127`
       )
       data = await r2022Data.text();
       this.CSV2022Data = this.CSVToArray(data);

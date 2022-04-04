@@ -1654,18 +1654,56 @@ export const hydroPosts = {
         coordinates: [52.673607, 60.482897]
       }
     },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 151.0,
+    //     District: "Чернушинский ГО",
+    //     stream: "р. Большой Танып",
+    //     Settlement: "Гидропост на р Б.Танып"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.1, 56.493333]
+    //   }
+    // }
     {
       type: "Feature",
       properties: {
         N: 151.0,
-        District: "Чернушинский ГО",
-        stream: "р. Большой Танып",
-        Settlement: "Гидропост на р Б.Танып"
+        District: "Чайковский ГО",
+        stream: "р.Заводская Камбарка",
+        Settlement: "п.Завод Михайловский"
       },
       geometry: {
         type: "Point",
-        coordinates: [56.1, 56.493333]
+        coordinates: [54.281815, 56.525716]
       }
-    }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 152.0,
+        District: "Чайковский ГО",
+        stream: "р.Поша",
+        Settlement: "с.Уральское"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.391382, 56.441637]
+      }
+    },    {
+      type: "Feature",
+      properties: {
+        N: 153.0,
+        District: "Юсьвинский ГО",
+        stream: "р.Велва",
+        Settlement: "с.Чинагорт"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.989423, 59.052192]
+      }
+    },
   ]
 };
