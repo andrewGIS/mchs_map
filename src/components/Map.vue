@@ -339,6 +339,11 @@
                   </template>
                   <span>Нажмите чтобы включить/отключить слой</span>
                 </v-tooltip>
+                <v-row class="pl-1">
+                  Последнее изменение документа:
+                  <br>
+                  {{ info }}
+                </v-row>
               </v-col>
             </v-card>
           </l-control>
@@ -399,7 +404,8 @@ export default {
       GTSVisible: false,
       dialogMultiChart: false,
       valuesMulti: [],
-      selectedLevel: "-"
+      selectedLevel: "-",
+      info: document.lastModified
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
