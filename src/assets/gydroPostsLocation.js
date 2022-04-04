@@ -523,19 +523,19 @@ export const hydroPosts = {
         coordinates: [58.259516693940441, 58.430181849812698]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 22.0,
-        District: "Карагайский МР",
-        stream: "р. Обва",
-        Settlement: "Ошмаш"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.841485702003695, 58.23651864871681]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 22.0,
+    //     District: "Карагайский МР",
+    //     stream: "р. Обва",
+    //     Settlement: "Ошмаш"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.841485702003695, 58.23651864871681]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
