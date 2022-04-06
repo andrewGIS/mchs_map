@@ -640,19 +640,19 @@ export const hydroPosts = {
         coordinates: [57.671122739323152, 57.734780223328812]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 79.0,
-        District: "Оханский МР",
-        stream: "р. Полуденка",
-        Settlement: "Андреевка"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [55.269887017172266, 57.520915074471304]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 79.0,
+    //     District: "Оханский МР",
+    //     stream: "р. Полуденка",
+    //     Settlement: "Андреевка"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [55.269887017172266, 57.520915074471304]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1238,19 +1238,19 @@ export const hydroPosts = {
         coordinates: [54.711751973175183, 57.877063970625898]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 80.0,
-        District: "Оханский МР",
-        stream: "р. Ошап",
-        Settlement: "Андреевка"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [55.269769197890355, 57.522496511604913]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 80.0,
+    //     District: "Оханский МР",
+    //     stream: "р. Ошап",
+    //     Settlement: "Андреевка"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [55.269769197890355, 57.522496511604913]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
