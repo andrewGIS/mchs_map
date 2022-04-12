@@ -354,32 +354,32 @@ export const hydroPosts = {
         coordinates: [54.688088345101221, 58.990643537969049]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 32.0,
-        District: "Кудымкарский МО",
-        stream: "р. Иньва",
-        Settlement: "Заречный Пешнигорт"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.547628734978332, 58.973971862711437]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        N: 33.0,
-        District: "Кудымкарский МО",
-        stream: "р. Иньва",
-        Settlement: "Ивукова"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.598340215528708, 58.980314794592289]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 32.0,
+    //     District: "Кудымкарский МО",
+    //     stream: "р. Иньва",
+    //     Settlement: "Заречный Пешнигорт"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.547628734978332, 58.973971862711437]
+    //   }
+    // },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 33.0,
+    //     District: "Кудымкарский МО",
+    //     stream: "р. Иньва",
+    //     Settlement: "Ивукова"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.598340215528708, 58.980314794592289]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1550,19 +1550,19 @@ export const hydroPosts = {
     //     coordinates: [57.613082, 57.009284]
     //   }
     // },
-    {
-      type: "Feature",
-      properties: {
-        N: 143.0,
-        District: "Пермский ГО",
-        stream: "р. Мулянка",
-        Settlement: "Субботино"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.17472, 57.93472]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 143.0,
+    //     District: "Пермский ГО",
+    //     stream: "р. Мулянка",
+    //     Settlement: "Субботино"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.17472, 57.93472]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1692,7 +1692,8 @@ export const hydroPosts = {
         type: "Point",
         coordinates: [54.391382, 56.441637]
       }
-    },    {
+    },
+    {
       type: "Feature",
       properties: {
         N: 153.0,
@@ -1703,6 +1704,31 @@ export const hydroPosts = {
       geometry: {
         type: "Point",
         coordinates: [54.989423, 59.052192]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 154.0,
+        District: "Кудымкарский ГО",
+        stream: "ГТС р.Юсьва",
+        Settlement: "с. Верх-Юсьва"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.651337, 58.842812]
+      }
+    },    {
+      type: "Feature",
+      properties: {
+        N: 155.0,
+        District: "Кудымкарский ГО",
+        stream: "ГТС р.Нердва",
+        Settlement: "с. Ленинск"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.709792, 58.713748]
       }
     },
   ]
