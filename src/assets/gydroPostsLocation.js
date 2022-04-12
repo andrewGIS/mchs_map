@@ -1308,12 +1308,12 @@ export const hydroPosts = {
       properties: {
         N: 89.0,
         District: "Куединский МР",
-        stream: "р. Буй ",
-        Settlement: "Куеда"
+        stream: "ГТС р. Сорочья",
+        Settlement: "д. Куеда"
       },
       geometry: {
         type: "Point",
-        coordinates: [55.557809514497649, 56.445704793541552]
+        coordinates: [55.533162, 56.452282]
       }
     },
     {
@@ -1352,7 +1352,7 @@ export const hydroPosts = {
       },
       geometry: {
         type: "Point",
-        coordinates: [55.584478312624185, 56.437879287898966]
+        coordinates: [55.556957, 56.445296]
       }
     },
     {
