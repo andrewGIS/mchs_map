@@ -1718,7 +1718,8 @@ export const hydroPosts = {
         type: "Point",
         coordinates: [54.651337, 58.842812]
       }
-    },    {
+    },
+    {
       type: "Feature",
       properties: {
         N: 155.0,
@@ -1729,6 +1730,19 @@ export const hydroPosts = {
       geometry: {
         type: "Point",
         coordinates: [54.709792, 58.713748]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 156.0,
+        District: "Кудымкарский ГО",
+        stream: "р.Иньва",
+        Settlement: "с. Верх-Иньва"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.336085, 58.934102]
       }
     },
   ]
