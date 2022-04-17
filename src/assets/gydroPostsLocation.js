@@ -614,19 +614,19 @@ export const hydroPosts = {
         coordinates: [54.838069883518472, 57.843156880086099]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 115.0,
-        District: "Пермский МР",
-        stream: "р.Качка",
-        Settlement: "Качка"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [55.753619523222596, 57.99553916679929]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 115.0,
+    //     District: "Пермский МР",
+    //     stream: "р.Качка",
+    //     Settlement: "Качка"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [55.753619523222596, 57.99553916679929]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
