@@ -1,21 +1,33 @@
 # This workflow will do a clean installation of node dependencies, cache/restore them, build the source code and run tests across different versions of node
 # For more information see: https://help.github.com/actions/language-and-framework-guides/using-nodejs-with-github-actions
 
-name: Build Vue
+name: 'Vue to Github Pages'
 on: 
   push:
     branches: [ master ]
+    
 jobs:
-  build_vue:
+  deploy-to-git-pages:
     runs-on: ubuntu-latest
     name: Build Vue
+    env:
+      username: 'andrewGIS'
+      reponame: 'mchs_map'
+      token: ${{ secrets.GITHUB_TOKEN }}
     steps:
-    - uses: actions/checkout@v2
-    - id: Build-Vue
-      uses: xRealNeon/VuePagesAction@1.0.0
-      with:
-        username: 'andrewGIS'
-        reponame: 'mchs_map'
-        token: ${{ secrets.GITHUB_TOKEN }}
-      env:
-        VUE_APP_PUBLIC_PATH: '/mchs_map'
+      - name: Get last commit
+        uses: actions/checkout@v2
+      - name: Build and upload result
+        run: |
+          npm ci
+          npm run build --mode github
+          cd dist
+          ln -s index.html 404.html
+          if [ "none" !=  ${{ inputs.cname }} ]; then echo '${{ inputs.cname }}' > CNAME; fi
+          git config --global user.email "${{ inputs.gitemail }}"
+          git config --global user.name "${{ inputs.gitname }}"
+          git init
+          git add -A
+          git commit -m '${{ inputs.gitmsg }}'
+          git push -f https://${{ env.username }}:${{ env.token }}@github.com/${{ env.username }}/${{ env.reponame }}.git master:gh-pages
+        shell: bash
