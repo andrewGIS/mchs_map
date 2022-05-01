@@ -1,7 +1,10 @@
 module.exports = {
   transpileDependencies: ["vuetify"],
   lintOnSave: false,
-  publicPath: process.env.NODE_ENV === "production" ? "/mchs_map" : "/",
+  //TODO test it
+  publicPath: process.env.NODE_ENV === "production"
+      ? "/~master/mchs_map" :
+      process.env.NODE_ENV === "github" ? "/mchs_map" : "/" ,
   configureWebpack: {
     devtool: "source-map",
   },
