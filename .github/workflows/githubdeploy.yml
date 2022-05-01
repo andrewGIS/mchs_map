@@ -23,11 +23,8 @@ jobs:
           npm run stage
           cd dist
           ln -s index.html 404.html
-          if [ "none" !=  ${{ inputs.cname }} ]; then echo '${{ inputs.cname }}' > CNAME; fi
-          git config --global user.email "${{ inputs.gitemail }}"
-          git config --global user.name "${{ inputs.gitname }}"
           git init
           git add -A
-          git commit -m '${{ inputs.gitmsg }}'
+          git commit -m 'deploy'
           git push -f https://${{ env.username }}:${{ env.token }}@github.com/${{ env.username }}/${{ env.reponame }}.git master:gh-pages
         shell: bash
