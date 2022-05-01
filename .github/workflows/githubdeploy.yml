@@ -5,6 +5,8 @@ name: Build Vue
 on: 
   push:
     branches: [ master ]
+  workflow_run:
+    branches: [ master ]
 jobs:
   build_vue:
     runs-on: ubuntu-latest
