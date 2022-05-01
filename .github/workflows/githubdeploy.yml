@@ -23,6 +23,8 @@ jobs:
           npm run stage
           cd dist
           ln -s index.html 404.html
+          git config --global user.email "test@mail.com"
+          git config --global user.name "deployuser"
           git init
           git add -A
           git commit -m 'deploy'
