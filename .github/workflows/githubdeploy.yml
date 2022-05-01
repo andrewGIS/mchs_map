@@ -18,4 +18,4 @@ jobs:
         reponame: 'mchs_map'
         token: ${{ secrets.GITHUB_TOKEN }}
       env:
-        VUE_APP_PUBLIC_PATH: '/mchs_map/'
+        VUE_APP_PUBLIC_PATH: '/mchs_map'
