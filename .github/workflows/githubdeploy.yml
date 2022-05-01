@@ -5,7 +5,7 @@ name: 'Vue to Github Pages'
 on: 
   push:
     branches: [ master ]
-    
+
 jobs:
   deploy-to-git-pages:
     runs-on: ubuntu-latest
@@ -20,7 +20,7 @@ jobs:
       - name: Build and upload result
         run: |
           npm ci
-          npm run build --mode github
+          npm run stage
           cd dist
           ln -s index.html 404.html
           if [ "none" !=  ${{ inputs.cname }} ]; then echo '${{ inputs.cname }}' > CNAME; fi

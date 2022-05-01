@@ -4,7 +4,8 @@
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
-    "build": "vue-cli-service build",
+    "build": "set PUBLIC_PATH=/~master/mchs_map && vue-cli-service build",
+    "stage": "set PUBLIC_PATH=mchs_map&& vue-cli-service build ",
     "lint": "vue-cli-service lint"
   },
   "dependencies": {
