@@ -692,19 +692,19 @@ export const hydroPosts = {
     //     coordinates: [56.913992796030868, 57.46520884201459]
     //   }
     // },
-    {
-      type: "Feature",
-      properties: {
-        N: 43.0,
-        District: "Кунгурский МР",
-        stream: "р. Бабка",
-        Settlement: "Моховое"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.878767293975613, 57.462353819173586]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 43.0,
+    //     District: "Кунгурский МР",
+    //     stream: "р. Бабка",
+    //     Settlement: "Моховое"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.878767293975613, 57.462353819173586]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
