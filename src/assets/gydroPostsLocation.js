@@ -1511,19 +1511,19 @@ export const hydroPosts = {
         coordinates: [57.914372422149711, 58.527702929546706]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 51.0,
-        District: "Пермский МР",
-        stream: "р. Мулянка",
-        Settlement: "Кондратово"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.120408809319258, 57.976925462240445]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 51.0,
+    //     District: "Пермский МР",
+    //     stream: "р. Мулянка",
+    //     Settlement: "Кондратово"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.120408809319258, 57.976925462240445]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
