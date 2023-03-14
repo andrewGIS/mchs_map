@@ -16,7 +16,7 @@ jobs:
       token: ${{ secrets.GITHUB_TOKEN }}
     steps:
       - name: Get last commit
-        uses: actions/checkout@v2
+        uses: actions/checkout@v3
       - name: Build and upload result
         run: |
           npm ci
