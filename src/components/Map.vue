@@ -341,7 +341,7 @@
                 </v-tooltip>
                 <v-row class="pl-1">
                   Последнее изменение документа:
-                  <br>
+                  <br />
                   {{ info }}
                 </v-row>
               </v-col>
@@ -356,9 +356,9 @@
 <script>
 import L from "leaflet";
 import { LMap, LTileLayer, LGeoJson, LControl } from "vue2-leaflet";
-import { hydroPosts } from "../assets/gydroPostsLocation";
-import { addHydroPosts } from "../assets/addGydroPostsLocation";
-import { GTS } from "../assets/GTS";
+import { hydroPosts } from "@/assets/gydroPostsLocation";
+import { addHydroPosts } from "@/assets/addGydroPostsLocation";
+import { GTS } from "@/assets/GTS";
 //const  hydroPosts = hydroPosts
 import { Icon } from "leaflet";
 // import { data } from process.env.BASE_URL+"public/addData.js";
@@ -450,8 +450,8 @@ export default {
           },
           {
             name: "Уровень воды 2022, см",
-            data: this.clickedData.data2022,
-          },
+            data: this.clickedData.data2022
+          }
         ],
         yAxis: [
           {
@@ -699,9 +699,9 @@ export default {
     },
     dates2022() {
       return this.timeIntervals(
-          new Date(2022, 3, 5),
-          new Date(2022, 4, 31),
-          new Date(2022, 0, 1)
+        new Date(2022, 3, 5),
+        new Date(2022, 4, 31),
+        new Date(2022, 0, 1)
       );
     },
     selectedDateIndex() {
@@ -710,7 +710,12 @@ export default {
     clickedData() {
       switch (this.clickedLayer) {
         case "BaseLayer":
-          if (this.CSV2020Data && this.CSV2021Data && this.CSV2022Data && this.selectedNum) {
+          if (
+            this.CSV2020Data &&
+            this.CSV2021Data &&
+            this.CSV2022Data &&
+            this.selectedNum
+          ) {
             let result = {};
             result.data2020 = [];
             let selectedRow;
@@ -753,8 +758,8 @@ export default {
             // for extracting water levels we extract only each fifth value
             if (selectedRow && selectedRow.length !== 0) {
               waterLevels = selectedRow
-                  .slice(8)
-                  .filter((value, idx) => idx % 5 === 0);
+                .slice(8)
+                .filter((value, idx) => idx % 5 === 0);
               waterLevels = waterLevels.map(value => parseFloat(value));
               nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
               maxValue = Math.max(...nonNanArray);
@@ -762,16 +767,16 @@ export default {
               waterLevels = waterLevels.map((value, idx) => {
                 return [this.dates2022[idx], parseFloat(value)];
               });
-              result.data2021 = waterLevels
+              result.data2021 = waterLevels;
             }
 
             // 2022 data
             selectedRow = this.CSV2022Data.filter(
-                row => row[0] == this.selectedNum
+              row => row[0] == this.selectedNum
             )[0];
             waterLevels = selectedRow
-                .slice(8)
-                .filter((value, idx) => idx % 5 === 0);
+              .slice(8)
+              .filter((value, idx) => idx % 5 === 0);
             waterLevels = waterLevels.map(value => parseFloat(value));
 
             nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
@@ -985,15 +990,15 @@ export default {
     },
     dates2022Formatted() {
       return this.dates2022.map(value =>
-              //shift date for display correct time in UTC +0500 zone
-          {
-            let date = new Date(value);
-            date.setFullYear(2022);
-            return {
-              text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
-              value
-            };
-          }
+        //shift date for display correct time in UTC +0500 zone
+        {
+          let date = new Date(value);
+          date.setFullYear(2022);
+          return {
+            text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
+            value
+          };
+        }
       );
     },
     optionLabels() {
@@ -1035,15 +1040,9 @@ export default {
       }
     },
     showLabels() {
-      if (
-        this.zoom > 8 &&
-        !this.showAnimationControl &&
-        !this.settedLimitedStyle
-      ) {
-        return true;
-      } else {
-        return false;
-      }
+      return (
+        this.zoom > 8 && !this.showAnimationControl && !this.settedLimitedStyle
+      );
     }
   },
   methods: {
@@ -1079,7 +1078,7 @@ export default {
       //let startDate = new Date(2021, 3, 5);
       //let endDate = new Date(2021, 5, 31);
 
-      let dateArray = new Array();
+      let dateArray = [];
       let currentDate = startDate;
       while (currentDate <= endDate) {
         dateArray.push(currentDate.setHours(8) - baseDate);
@@ -1113,7 +1112,7 @@ export default {
     },
     toggleAnimationControl() {
       if (this.showAnimationControl) this.setStandartStyle(); // set default style
-      this.showAnimationControl = this.showAnimationControl ? false : true;
+      this.showAnimationControl = !this.showAnimationControl;
       this.selectedDate = this.selectedDate ? null : this.dates2022[0];
       this.infoShow = true;
     },
@@ -1143,8 +1142,8 @@ export default {
       // Delete header columns and get only level waters (every 5 columns)
 
       const r2022Data = await fetch(
-          `https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF127`
-      )
+        `https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF127`
+      );
       data = await r2022Data.text();
       this.CSV2022Data = this.CSVToArray(data);
 
