@@ -23,14 +23,20 @@
     <portal to="levelByButton">
       <v-btn
         text
-        v-if="!showAnimationControl && !$vuetify.breakpoint.xsOnly"
+        v-if="
+          !showAnimationControl &&
+            !$vuetify.breakpoint.xsOnly &&
+            !this.filterText
+        "
         @click="setLimitStyle"
       >
         <v-icon left>mdi-flash-alert</v-icon>НЯ и ОЯ за последний срок
       </v-btn>
       <v-btn
         icon
-        v-if="!showAnimationControl && $vuetify.breakpoint.xsOnly"
+        v-if="
+          !showAnimationControl && $vuetify.breakpoint.xsOnly && !filterText
+        "
         @click="setLimitStyle"
       >
         <v-icon left>mdi-flash-alert</v-icon>
@@ -38,7 +44,7 @@
     </portal>
     <portal to="dynamicButton">
       <v-btn
-        v-if="!$vuetify.breakpoint.xsOnly"
+        v-if="!$vuetify.breakpoint.xsOnly && !this.filterText"
         text
         @click="toggleAnimationControl"
       >
@@ -54,7 +60,7 @@
     </portal>
     <portal to="MultiGraph">
       <v-btn
-        v-if="!$vuetify.breakpoint.xsOnly"
+        v-if="!$vuetify.breakpoint.xsOnly && !this.filterText"
         text
         @click="dialogMultiChart = !dialogMultiChart"
       >
@@ -68,6 +74,7 @@
         <v-icon left>mdi-chart-histogram</v-icon>
       </v-btn>
     </portal>
+
     <v-row justify="center">
       <v-dialog
         style="z-index: 100000000"
@@ -266,7 +273,7 @@
           <l-geo-json
             ref="geoJson"
             :geojson="gydroPostsLocations"
-            :options="optionsGeoJSON"
+            :options="{ ...optionsGeoJSON, filter: this.filterGeojson }"
           ></l-geo-json>
           <l-geo-json
             ref="labelgeoJson"
@@ -347,6 +354,21 @@
               </v-col>
             </v-card>
           </l-control>
+          <l-control
+            :position="'topleft'"
+            v-if="!$vuetify.breakpoint.xsOnly && !showAnimationControl && !settedLimitedStyle"
+          >
+            <v-card>
+              <v-col>
+                <v-text-field
+                  label="Быстрый фильтр"
+                  v-model="filterText"
+                  placeholder="Айди, река, нас.пункт ..."
+                >
+                </v-text-field>
+              </v-col>
+            </v-card>
+          </l-control>
         </l-map>
       </v-container>
     </v-row>
@@ -379,7 +401,7 @@ Date.prototype.addDays = function(days) {
 export default {
   data() {
     return {
-      filterText: null,
+      filterText: "",
       zoom: 6,
       infoShow: true,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -1011,6 +1033,21 @@ export default {
         }
       };
     },
+    filterGeojson() {
+      return feature => {
+        const text = this.filterText.toString().toLowerCase();
+        const props = ["N", "Settlement", "stream", "District"];
+        const find = props
+          .map(field => {
+            return feature.properties[field]
+              .toString()
+              .toLowerCase()
+              .includes(text);
+          })
+          .some(f => f === true);
+        return !(Boolean(this.filterText) && !find);
+      };
+    },
     selectedRowData() {
       return this.CSV2023Data.filter(
         row => row[0] == this.selectedNum
@@ -1389,6 +1426,7 @@ export default {
     },
     setStandartStyle() {
       this.settedLimitedStyle = false;
+      this.filterText = "";
       // if (this.zoom > 8) {
       //   this.showLabels = true;
       // } else {
