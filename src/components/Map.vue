@@ -188,7 +188,7 @@
                 <v-col cols="5" style="z-index: 1000">
                   <v-select
                     solo
-                    :items="dates2022Formatted"
+                    :items="dates2023Formatted"
                     v-model="selectedDate"
                     :disabled="isAnimation"
                   ></v-select>
@@ -379,6 +379,7 @@ Date.prototype.addDays = function(days) {
 export default {
   data() {
     return {
+      filterText: null,
       zoom: 6,
       infoShow: true,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
@@ -387,6 +388,7 @@ export default {
       CSV2020Data: [],
       CSV2021Data: [],
       CSV2022Data: [],
+      CSV2023Data: [],
       dialog: false,
       selectedNum: null,
       setStyle: false,
@@ -450,7 +452,15 @@ export default {
           },
           {
             name: "Уровень воды 2022, см",
-            data: this.clickedData.data2022
+            data: this.clickedData.data2022,
+            accessibility: {
+              enabled: false
+            },
+            visible: false
+          },
+          {
+            name: "Уровень воды 2023, см",
+            data: this.clickedData.data2023
           }
         ],
         yAxis: [
@@ -509,11 +519,11 @@ export default {
             let date;
             switch (ctx.clickedLayer) {
               case "BaseLayer":
-                if (this.series.name === "Уровень воды 2022, см") {
+                if (this.series.name === "Уровень воды 2023, см") {
                   date = new Date(this.x);
-                  date.setFullYear(2022);
+                  date.setFullYear(2023);
 
-                  const dateIdx = ctx.dates2022.indexOf(this.x);
+                  const dateIdx = ctx.dates2023.indexOf(this.x);
                   const damagedHouses = ctx.selectedRowData
                     .slice(1)
                     .filter((value, idx) => {
@@ -538,7 +548,7 @@ export default {
                       if (idx % 5 === 0) return value;
                     });
 
-                  return `Уровень воды 2022, см: <br> на ${new Date(
+                  return `Уровень воды 2023, см: <br> на ${new Date(
                     date - 3600 * 5 * 1000 // shift date for display correct time in UTC +0500 zone
                   ).toLocaleString()}:<b>${this.y}</b> 
               <br>Количество подтопленных жилых домов - ${
@@ -563,7 +573,7 @@ export default {
                 }
               case "ESIMO":
                 date = new Date(this.x);
-                date.setFullYear(2022);
+                date.setFullYear(2023);
                 return `${new Date(date - 3600 * 5 * 1000).toLocaleString()}:${
                   this.y
                 }`;
@@ -573,7 +583,7 @@ export default {
       };
     },
     stations() {
-      return this.CSV2022Data.map(row => ({
+      return this.CSV2023Data.map(row => ({
         id: row[0],
         label: `${row[0]}, ${row[1]}, ${row[2]}`
       }));
@@ -704,6 +714,13 @@ export default {
         new Date(2022, 0, 1)
       );
     },
+    dates2023() {
+      return this.timeIntervals(
+        new Date(2023, 3, 5),
+        new Date(2023, 5, 5),
+        new Date(2023, 0, 1)
+      );
+    },
     selectedDateIndex() {
       return this.dates2022.indexOf(this.selectedDate);
     },
@@ -714,6 +731,7 @@ export default {
             this.CSV2020Data &&
             this.CSV2021Data &&
             this.CSV2022Data &&
+            this.CSV2023Data &&
             this.selectedNum
           ) {
             let result = {};
@@ -774,6 +792,28 @@ export default {
             selectedRow = this.CSV2022Data.filter(
               row => row[0] == this.selectedNum
             )[0];
+
+            // In table for each dates 5 values are preseneted
+            // water level, damaged houses count, damaged children (2 cols), damaged houses count
+            // for extracting water levels we extract only each fifth value
+            if (selectedRow && selectedRow.length !== 0) {
+              waterLevels = selectedRow
+                .slice(8)
+                .filter((value, idx) => idx % 5 === 0);
+              waterLevels = waterLevels.map(value => parseFloat(value));
+              nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+              maxValue = Math.max(...nonNanArray);
+
+              waterLevels = waterLevels.map((value, idx) => {
+                return [this.dates2022[idx], parseFloat(value)];
+              });
+              result.data2022 = waterLevels;
+            }
+
+            // 2023 data
+            selectedRow = this.CSV2023Data.filter(
+              row => row[0] == this.selectedNum
+            )[0];
             waterLevels = selectedRow
               .slice(8)
               .filter((value, idx) => idx % 5 === 0);
@@ -783,7 +823,7 @@ export default {
             maxValue = Math.max(...nonNanArray);
 
             waterLevels = waterLevels.map((value, idx) => {
-              return [this.dates2022[idx], parseFloat(value)];
+              return [this.dates2023[idx], parseFloat(value)];
             });
 
             const yellowLimitValue = parseFloat(selectedRow[5]);
@@ -793,7 +833,7 @@ export default {
             const maxObservedValue =
               maxValue > redLimitValue ? maxValue + 100 : redLimitValue;
 
-            result.data2022 = waterLevels;
+            result.data2023 = waterLevels;
             result.title = `Номер в списке: ${selectedRow[0]}, Название: ${selectedRow[2]}`;
             result.yellowLimit = yellowLimitValue;
             result.redLimit = redLimitValue;
@@ -805,6 +845,7 @@ export default {
               data2020: [],
               data2021: [],
               data2022: [],
+              data2023: [],
               data: [],
               title: "",
               yellowLimit: 0,
@@ -971,7 +1012,7 @@ export default {
       };
     },
     selectedRowData() {
-      return this.CSV2022Data.filter(
+      return this.CSV2023Data.filter(
         row => row[0] == this.selectedNum
       )[0].slice(8);
     },
@@ -994,6 +1035,19 @@ export default {
         {
           let date = new Date(value);
           date.setFullYear(2022);
+          return {
+            text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
+            value
+          };
+        }
+      );
+    },
+    dates2023Formatted() {
+      return this.dates2023.map(value =>
+        //shift date for display correct time in UTC +0500 zone
+        {
+          let date = new Date(value);
+          date.setFullYear(2023);
           return {
             text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
             value
@@ -1048,7 +1102,7 @@ export default {
   methods: {
     getStationData(id) {
       // 2021 data
-      let selectedRow = this.CSV2022Data.filter(row => row[0] == id)[0];
+      let selectedRow = this.CSV2023Data.filter(row => row[0] == id)[0];
 
       // In table for each dates 5 values are preseneted
       // water level, damaged houses count, damaged children (2 cols), damaged houses count
@@ -1059,7 +1113,7 @@ export default {
       waterLevels = waterLevels.map(value => parseFloat(value));
 
       waterLevels = waterLevels.map((value, idx) => {
-        return [this.dates2022[idx], parseFloat(value)];
+        return [this.dates2023[idx], parseFloat(value)];
       });
 
       const yellowLimitValue = parseFloat(selectedRow[5]);
@@ -1113,7 +1167,7 @@ export default {
     toggleAnimationControl() {
       if (this.showAnimationControl) this.setStandartStyle(); // set default style
       this.showAnimationControl = !this.showAnimationControl;
-      this.selectedDate = this.selectedDate ? null : this.dates2022[0];
+      this.selectedDate = this.selectedDate ? null : this.dates2023[0];
       this.infoShow = true;
     },
     async requestTableData() {
@@ -1146,6 +1200,12 @@ export default {
       );
       data = await r2022Data.text();
       this.CSV2022Data = this.CSVToArray(data);
+
+      const r2023Data = await fetch(
+        `https://docs.google.com/spreadsheets/d/1Fj3dAJv_XjkSHipvr4Xw5YsrcPN21usuKKHp79J9kT8/gviz/tq?tqx=out:csv&range=A6:XD136`
+      );
+      data = await r2023Data.text();
+      this.CSV2023Data = this.CSVToArray(data);
 
       //local
       //console.log(`${process.env.BASE_URL}data/data.csv`)
@@ -1229,13 +1289,15 @@ export default {
       // 5 column  index of this value 5
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
+          const count = [];
           this.$refs.geoJson.mapObject.eachLayer(layer => {
+            count.push(layer.feature.properties.N);
             //this.$refs.geoJson.mapObject.setStyle(layer => {
-            let stationData = this.CSV2022Data.filter(
+            let stationData = this.CSV2023Data.filter(
               row => parseInt(row[0]) === layer.feature.properties.N
             )[0];
 
-            //console.log(layer.feature.properties.N);
+            console.log(layer.feature.properties.N);
 
             let datesValues = stationData
               .slice(8)
@@ -1303,6 +1365,8 @@ export default {
             }
             layer.setStyle(style);
           });
+          console.log(`Всего станци ${count.length}`);
+          console.log(count);
         }
       });
     },
@@ -1357,7 +1421,7 @@ export default {
           //if (this.$refs.geoJson) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
             // define radius
-            const stationData = this.CSV2022Data.filter(
+            const stationData = this.CSV2023Data.filter(
               row => parseInt(row[0]) === layer.feature.properties.N
             )[0];
             let datesValues = stationData

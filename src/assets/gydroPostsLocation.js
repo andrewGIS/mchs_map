@@ -81,19 +81,19 @@ export const hydroPosts = {
         coordinates: [55.586602000482117, 57.072582813246413]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 10.0,
-        District: "Бардымский МО",
-        stream: "р.р. Чириз, Тулва",
-        Settlement: "Ишимово"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [55.586838109391408, 57.009782834610292]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 10.0,
+    //     District: "Бардымский МО",
+    //     stream: "р.р. Чириз, Тулва",
+    //     Settlement: "Ишимово"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [55.586838109391408, 57.009782834610292]
+    //   }
+    // },
     // {
     //   type: "Feature",
     //   properties: {
@@ -159,19 +159,19 @@ export const hydroPosts = {
         coordinates: [56.339312103271141, 56.859038288886097]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 57.0,
-        District: "Уинский МО",
-        stream: "р.Судинка",
-        Settlement: "Суда"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.812548914001354, 56.960917411309651]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 57.0,
+    //     District: "Уинский МО",
+    //     stream: "р.Судинка",
+    //     Settlement: "Суда"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.812548914001354, 56.960917411309651]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -354,32 +354,32 @@ export const hydroPosts = {
         coordinates: [54.688088345101221, 58.990643537969049]
       }
     },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 32.0,
-    //     District: "Кудымкарский МО",
-    //     stream: "р. Иньва",
-    //     Settlement: "Заречный Пешнигорт"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [54.547628734978332, 58.973971862711437]
-    //   }
-    // },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 33.0,
-    //     District: "Кудымкарский МО",
-    //     stream: "р. Иньва",
-    //     Settlement: "Ивукова"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [54.598340215528708, 58.980314794592289]
-    //   }
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 32.0,
+        District: "Кудымкарский МО",
+        stream: "р. Иньва",
+        Settlement: "Заречный Пешнигорт"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.547628734978332, 58.973971862711437]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 33.0,
+        District: "Кудымкарский МО",
+        stream: "р. Иньва",
+        Settlement: "Ивукова"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [54.598340215528708, 58.980314794592289]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -432,19 +432,19 @@ export const hydroPosts = {
         coordinates: [54.378661496431107, 58.375597904719712]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 104.0,
-        District: "Чердынский ГО",
-        stream: "р. Кама",
-        Settlement: "Керчевский"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.304086612907042, 59.945644535567055]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 104.0,
+    //     District: "Чердынский ГО",
+    //     stream: "р. Кама",
+    //     Settlement: "Керчевский"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.304086612907042, 59.945644535567055]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -536,19 +536,19 @@ export const hydroPosts = {
     //     coordinates: [54.841485702003695, 58.23651864871681]
     //   }
     // },
-    {
-      type: "Feature",
-      properties: {
-        N: 94.0,
-        District: "Карагайский МР",
-        stream: "р. Обва",
-        Settlement: "Карагай"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.923653578250196, 58.2727875055391]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 94.0,
+    //     District: "Карагайский МР",
+    //     stream: "р. Обва",
+    //     Settlement: "Карагай"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.923653578250196, 58.2727875055391]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -614,19 +614,19 @@ export const hydroPosts = {
         coordinates: [54.838069883518472, 57.843156880086099]
       }
     },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 115.0,
-    //     District: "Пермский МР",
-    //     stream: "р.Качка",
-    //     Settlement: "Качка"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [55.753619523222596, 57.99553916679929]
-    //   }
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 115.0,
+        District: "Пермский МР",
+        stream: "р.Качка",
+        Settlement: "Качка"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.753619523222596, 57.99553916679929]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -692,19 +692,19 @@ export const hydroPosts = {
     //     coordinates: [56.913992796030868, 57.46520884201459]
     //   }
     // },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 43.0,
-    //     District: "Кунгурский МР",
-    //     stream: "р. Бабка",
-    //     Settlement: "Моховое"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [56.878767293975613, 57.462353819173586]
-    //   }
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 43.0,
+        District: "Кунгурский МР",
+        stream: "р. Бабка",
+        Settlement: "Моховое"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.878767293975613, 57.462353819173586]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -1004,32 +1004,32 @@ export const hydroPosts = {
         coordinates: [55.802337027831754, 58.056798773145033]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 29.0,
-        District: "ГО Кудымкар",
-        stream: "р.Иньва",
-        Settlement: "Кудымкар"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.669910113860851, 59.003433666430738]
-      }
-    },
-    {
-      type: "Feature",
-      properties: {
-        N: 30.0,
-        District: "ГО Кудымкар",
-        stream: "ГТС р. Кува",
-        Settlement: "Кудымкар"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.650001742586539, 59.01126423165914]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 29.0,
+    //     District: "ГО Кудымкар",
+    //     stream: "р.Иньва",
+    //     Settlement: "Кудымкар"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.669910113860851, 59.003433666430738]
+    //   }
+    // },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 30.0,
+    //     District: "ГО Кудымкар",
+    //     stream: "ГТС р. Кува",
+    //     Settlement: "Кудымкар"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.650001742586539, 59.01126423165914]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1082,19 +1082,19 @@ export const hydroPosts = {
     //     coordinates: [56.942524244798221, 57.457433684017474]
     //   }
     // },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 52.0,
-    //     District: "Пермский МР",
-    //     stream: "р. Мулянка",
-    //     Settlement: "дорога на Шумки"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [55.966761017307249, 57.909016623018886]
-    //   }
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 162.0,
+        District: "Пермский МР",
+        stream: "р. Мулянка",
+        Settlement: "дорога на Шумки"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.966761017307249, 57.909016623018886]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -1407,19 +1407,19 @@ export const hydroPosts = {
     //     coordinates: [56.614173949768144, 57.075644038042071]
     //   }
     // },
-    {
-      type: "Feature",
-      properties: {
-        N: 105.0,
-        District: "Чердынский ГО",
-        stream: "р. Колва",
-        Settlement: "Чердынь"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [56.493265676469946, 60.39795386148171]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 105.0,
+    //     District: "Чердынский ГО",
+    //     stream: "р. Колва",
+    //     Settlement: "Чердынь"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [56.493265676469946, 60.39795386148171]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1511,19 +1511,19 @@ export const hydroPosts = {
         coordinates: [57.914372422149711, 58.527702929546706]
       }
     },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 51.0,
-    //     District: "Пермский МР",
-    //     stream: "р. Мулянка",
-    //     Settlement: "Кондратово"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [56.120408809319258, 57.976925462240445]
-    //   }
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 51.0,
+        District: "Пермский МР",
+        stream: "р. Мулянка",
+        Settlement: "Кондратово"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.120408809319258, 57.976925462240445]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -1550,19 +1550,19 @@ export const hydroPosts = {
     //     coordinates: [57.613082, 57.009284]
     //   }
     // },
-    // {
-    //   type: "Feature",
-    //   properties: {
-    //     N: 143.0,
-    //     District: "Пермский ГО",
-    //     stream: "р. Мулянка",
-    //     Settlement: "Субботино"
-    //   },
-    //   geometry: {
-    //     type: "Point",
-    //     coordinates: [56.17472, 57.93472]
-    //   }
-    // },
+    {
+      type: "Feature",
+      properties: {
+        N: 143.0,
+        District: "Пермский ГО",
+        stream: "р. Мулянка",
+        Settlement: "Субботино"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.17472, 57.93472]
+      }
+    },
     {
       type: "Feature",
       properties: {
@@ -1693,19 +1693,19 @@ export const hydroPosts = {
         coordinates: [54.391382, 56.441637]
       }
     },
-    {
-      type: "Feature",
-      properties: {
-        N: 153.0,
-        District: "Юсьвинский ГО",
-        stream: "р.Велва",
-        Settlement: "с.Чинагорт"
-      },
-      geometry: {
-        type: "Point",
-        coordinates: [54.989423, 59.052192]
-      }
-    },
+    // {
+    //   type: "Feature",
+    //   properties: {
+    //     N: 153.0,
+    //     District: "Юсьвинский ГО",
+    //     stream: "р.Велва",
+    //     Settlement: "с.Чинагорт"
+    //   },
+    //   geometry: {
+    //     type: "Point",
+    //     coordinates: [54.989423, 59.052192]
+    //   }
+    // },
     {
       type: "Feature",
       properties: {
@@ -1743,6 +1743,227 @@ export const hydroPosts = {
       geometry: {
         type: "Point",
         coordinates: [54.336085, 58.934102]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 159.0,
+        District: "Губахинский МО",
+        stream: "р.Косьва",
+        Settlement: "п. Загубашка"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [57.6106874, 58.86352103]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 157.0,
+        District: "Октябрьский  МО",
+        stream: "ГТС пруд",
+        Settlement: "с. Бияваш"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.96473741, 56.15536745]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 158.0,
+        District: "Октябрьский  МО",
+        stream: "ГТС пруд",
+        Settlement: "п. Щучье озеро"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.65139791, 56.45510851]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 140.0,
+        District: "Пермский МО",
+        stream: "р. Кама",
+        Settlement: "д. Гамы"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.80861485, 58.03326939]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 159.0,
+        District: "Пермский МО",
+        stream: "пруд",
+        Settlement: "д. Мокино"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.91615932, 57.85956571]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 160.0,
+        District: "Пермский МО",
+        stream: "ГТС  р. Сарабаиха",
+        Settlement: "с. Култаево"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.94191746, 57.90237274]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 161.0,
+        District: "Пермский МО",
+        stream: "р. Мулянка",
+        Settlement: "с. Баш-Култаево"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.91614417, 57.85952905]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 163.0,
+        District: "Пермский МО",
+        stream: "р.Юг",
+        Settlement: "с. Бершеть"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.37840588, 57.71958945]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 164.0,
+        District: "Пермский МО",
+        stream: "ГТС на р. Юг",
+        Settlement: "п. Юго-Камский"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.58335808, 57.71141079]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 165.0,
+        District: "Пермский МО",
+        stream: "ГТС на р. Северная",
+        Settlement: "п. Юго-Камский"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [55.62922914, 57.72556366]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 166.0,
+        District: "Пермский МО",
+        stream: "пруд на р. Курашимовка",
+        Settlement: "п.Курашим"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.60412369, 57.66942097]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 168.0,
+        District: "Чердынский МО",
+        stream: "р. Колва",
+        Settlement: "с. Сергеево"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.60412369, 57.66942097]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 169.0,
+        District: "Чердынский МО",
+        stream: "р. Уролка",
+        Settlement: "с. Усть-Уролка"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.16864429, 60.12271313]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 170.0,
+        District: "Чердынский МО",
+        stream: "р. Тошибка",
+        Settlement: "п. Курган"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.139819, 60.172406]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 171.0,
+        District: "Чердынский МО",
+        stream: "ГТС р. Челва",
+        Settlement: "д. Никитник"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.170715, 60.291818]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 172.0,
+        District: "Чердынский МО",
+        stream: "ГТС р. Лызовка",
+        Settlement: "д. Савина"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.22418331, 60.51269307]
+      }
+    },
+    {
+      type: "Feature",
+      properties: {
+        N: 173.0,
+        District: "Чердынский МО",
+        stream: "ГТС р. Урольская",
+        Settlement: "д. Урол"
+      },
+      geometry: {
+        type: "Point",
+        coordinates: [56.33327487, 60.33115557]
       }
     },
   ]
