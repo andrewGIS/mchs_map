@@ -1748,7 +1748,7 @@ export const hydroPosts = {
     {
       type: "Feature",
       properties: {
-        N: 159.0,
+        N: 174.0,
         District: "Губахинский МО",
         stream: "р.Косьва",
         Settlement: "п. Загубашка"
@@ -1894,11 +1894,11 @@ export const hydroPosts = {
         N: 168.0,
         District: "Чердынский МО",
         stream: "р. Колва",
-        Settlement: "с. Сергеево"
+        Settlement: "с. Серегово"
       },
       geometry: {
         type: "Point",
-        coordinates: [56.60412369, 57.66942097]
+        coordinates: [56.514561, 60.364978]
       }
     },
     {

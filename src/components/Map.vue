@@ -278,7 +278,7 @@
           <l-geo-json
             ref="labelgeoJson"
             :geojson="gydroPostsLocations"
-            :options="optionLabels"
+            :options="{ ...optionLabels, filter: this.filterGeojson}"
           ></l-geo-json>
           <l-geo-json
             ref="geoJsonAdd"
@@ -363,7 +363,7 @@
                 <v-text-field
                   label="Быстрый фильтр"
                   v-model="filterText"
-                  placeholder="Айди, река, нас.пункт ..."
+                  placeholder="ID, река, нас.пункт ..."
                 >
                 </v-text-field>
               </v-col>
@@ -1239,7 +1239,7 @@ export default {
       this.CSV2022Data = this.CSVToArray(data);
 
       const r2023Data = await fetch(
-        `https://docs.google.com/spreadsheets/d/1Fj3dAJv_XjkSHipvr4Xw5YsrcPN21usuKKHp79J9kT8/gviz/tq?tqx=out:csv&range=A6:XD136`
+        `https://docs.google.com/spreadsheets/d/1Fj3dAJv_XjkSHipvr4Xw5YsrcPN21usuKKHp79J9kT8/gviz/tq?tqx=out:csv&range=A6:XD135`
       );
       data = await r2023Data.text();
       this.CSV2023Data = this.CSVToArray(data);
