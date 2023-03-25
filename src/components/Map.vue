@@ -455,8 +455,8 @@ export default {
         },
         series: [
           {
-            name: "Уровень воды 2020, см",
-            data: this.clickedData.data2020,
+            name: `Уровень воды 2020, см ${this.clickedData.data2020.station_name}`,
+            data: this.clickedData.data2020.levels,
             accessibility: {
               enabled: false
             },
@@ -464,8 +464,8 @@ export default {
             color: "#A0A0A0"
           },
           {
-            name: "Уровень воды 2021, см",
-            data: this.clickedData.data2021,
+            name: `Уровень воды 2021, см ${this.clickedData.data2021.station_name}`,
+            data: this.clickedData.data2021.levels,
             accessibility: {
               enabled: false
             },
@@ -473,8 +473,8 @@ export default {
             color: "#9d5252"
           },
           {
-            name: "Уровень воды 2022, см",
-            data: this.clickedData.data2022,
+            name: `Уровень воды 2022, см ${this.clickedData.data2022.station_name}`,
+            data: this.clickedData.data2022.levels,
             accessibility: {
               enabled: false
             },
@@ -757,7 +757,9 @@ export default {
             this.selectedNum
           ) {
             let result = {};
-            result.data2020 = [];
+            result.data2020 = { levels: [], station_name: "Не найдено" };
+            result.data2021 = { levels: [], station_name: "Не найдено" };
+            result.data2022 = { levels: [], station_name: "Не найдено" };
             let selectedRow;
             let waterLevels;
             let nonNanArray;
@@ -775,7 +777,7 @@ export default {
               waterLevels = waterLevels.map((value, idx) => {
                 return [this.dates2020[idx], value];
               });
-              result.data2020 = waterLevels;
+              result.data2020 = {levels: waterLevels, station_name: `(Найденный гидропост в 2020 г. - ${selectedRow[3]})`};
               //nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
             }
 
@@ -807,7 +809,7 @@ export default {
               waterLevels = waterLevels.map((value, idx) => {
                 return [this.dates2022[idx], parseFloat(value)];
               });
-              result.data2021 = waterLevels;
+              result.data2021 = {levels: waterLevels, station_name: `(Найденный гидропост в 2021 г. - ${selectedRow[4]})`};
             }
 
             // 2022 data
@@ -829,7 +831,7 @@ export default {
               waterLevels = waterLevels.map((value, idx) => {
                 return [this.dates2022[idx], parseFloat(value)];
               });
-              result.data2022 = waterLevels;
+              result.data2022 = {levels: waterLevels, station_name: `(Найденный гидропост в 2022 г. - ${selectedRow[4]})`};
             }
 
             // 2023 data
@@ -864,9 +866,9 @@ export default {
             return result;
           } else {
             return {
-              data2020: [],
-              data2021: [],
-              data2022: [],
+              data2020: { levels: [], station_name: "Не найдено" },
+              data2021: { levels: [], station_name: "Не найдено" },
+              data2022: { levels: [], station_name: "Не найдено" },
               data2023: [],
               data: [],
               title: "",
@@ -921,6 +923,9 @@ export default {
           };
         default:
           return {
+            data2020: [],
+            data2021: [],
+            data2022: [],
             oldData: [],
             data: [],
             title: [],
