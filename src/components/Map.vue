@@ -209,7 +209,7 @@
                         v-on="on"
                         :disabled="
                           isAnimation ||
-                            selectedDateIndex === dates2022.length - 1
+                            selectedDateIndex === dates2023.length - 1
                         "
                       >
                         <v-icon class="group pa-2" :size="25"
@@ -530,8 +530,8 @@ export default {
             title: {
               text: "Сроки измерения"
             },
-            min: this.clickedLayer === "BaseLayer" ? 8150400000 : null,
-            max: this.clickedLayer === "BaseLayer" ? 12938400000 : null
+            min: this.clickedLayer === "BaseLayer" ? 7372800000 : null,
+            max: this.clickedLayer === "BaseLayer" ? 12679200000 : null
             //min: 8150400000,
             //max: 12938400000
           }
@@ -695,7 +695,8 @@ export default {
             title: {
               text: "Сроки измерения"
             },
-            min: 8150400000
+            min: 7372800000
+            //min: 8150400000
             //max: 12938400000
             //min: 8150400000,
             //max: 12938400000
@@ -738,13 +739,13 @@ export default {
     },
     dates2023() {
       return this.timeIntervals(
-        new Date(2023, 3, 5),
-        new Date(2023, 5, 5),
+        new Date(2023, 2, 27),
+        new Date(2023, 4, 28),
         new Date(2023, 0, 1)
       );
     },
     selectedDateIndex() {
-      return this.dates2022.indexOf(this.selectedDate);
+      return this.dates2023.indexOf(this.selectedDate);
     },
     clickedData() {
       switch (this.clickedLayer) {
@@ -1193,18 +1194,18 @@ export default {
       //this.request = requestAnimationFrame(this.animation)
       let index = this.selectedDateIndex;
       this.timer = setInterval(() => {
-        if (index < this.dates2022.length) {
-          this.selectedDate = this.dates2022[index];
+        if (index < this.dates2023.length) {
+          this.selectedDate = this.dates2023[index];
           index += 1;
         }
       }, 500);
       // let index = this.selectedDateIndex;
     },
     nextDate() {
-      this.selectedDate = this.dates2022[this.selectedDateIndex + 1];
+      this.selectedDate = this.dates2023[this.selectedDateIndex + 1];
     },
     prevDate() {
-      this.selectedDate = this.dates2022[this.selectedDateIndex - 1];
+      this.selectedDate = this.dates2023[this.selectedDateIndex - 1];
     },
     toggleAnimationControl() {
       if (this.showAnimationControl) this.setStandartStyle(); // set default style
