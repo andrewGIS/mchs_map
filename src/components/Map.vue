@@ -273,12 +273,16 @@
           <l-geo-json
             ref="geoJson"
             :geojson="gydroPostsLocations"
-            :options="{ ...optionsGeoJSON, filter: this.filterGeojson }"
+            :options="optionsGeoJSON"
           ></l-geo-json>
           <l-geo-json
             ref="labelgeoJson"
             :geojson="gydroPostsLocations"
-            :options="{ ...optionLabels, filter: this.filterGeojson}"
+            :options="
+              !showAnimationControl
+                ? { ...optionLabels, filter: this.filterGeojson }
+                : { ...optionLabels }
+            "
           ></l-geo-json>
           <l-geo-json
             ref="geoJsonAdd"
@@ -356,7 +360,11 @@
           </l-control>
           <l-control
             :position="'topleft'"
-            v-if="!$vuetify.breakpoint.xsOnly && !showAnimationControl && !settedLimitedStyle"
+            v-if="
+              !$vuetify.breakpoint.xsOnly &&
+                !showAnimationControl &&
+                !settedLimitedStyle
+            "
           >
             <v-card>
               <v-col>
@@ -376,13 +384,12 @@
 </template>
 
 <script>
-import L from "leaflet";
-import { LMap, LTileLayer, LGeoJson, LControl } from "vue2-leaflet";
+//const  hydroPosts = hydroPosts
+import L, { Icon } from "leaflet";
+import { LControl, LGeoJson, LMap, LTileLayer } from "vue2-leaflet";
 import { hydroPosts } from "@/assets/gydroPostsLocation";
 import { addHydroPosts } from "@/assets/addGydroPostsLocation";
 import { GTS } from "@/assets/GTS";
-//const  hydroPosts = hydroPosts
-import { Icon } from "leaflet";
 // import { data } from process.env.BASE_URL+"public/addData.js";
 
 delete Icon.Default.prototype._getIconUrl;
@@ -407,10 +414,11 @@ export default {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       gydroPostsLocations: hydroPosts,
       AddGydroPostsLocations: addHydroPosts,
-      CSV2020Data: [],
-      CSV2021Data: [],
-      CSV2022Data: [],
-      CSV2023Data: [],
+      csvData: null,
+      //CSV2020Data: [],
+      //CSV2021Data: [],
+      //CSV2022Data: [],
+      //CSV2023Data: [],
       dialog: false,
       selectedNum: null,
       setStyle: false,
@@ -434,6 +442,10 @@ export default {
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
   computed: {
+    actualData() {
+      if (!this.csvData) return [];
+      return this.csvData.r2023Data;
+    },
     chartOptions() {
       var ctx = this;
       return {
@@ -605,7 +617,7 @@ export default {
       };
     },
     stations() {
-      return this.CSV2023Data.map(row => ({
+      return (this.actualData || []).map(row => ({
         id: row[0],
         label: `${row[0]}, ${row[1]}, ${row[2]}`
       }));
@@ -714,7 +726,7 @@ export default {
       };
     },
     multiChartData() {
-      return this.valuesMulti.map(value => this.getStationData(value));
+      return this.valuesMulti.map(value => this.getStationDataFromCSV(value));
     },
     dates2020() {
       return this.timeIntervals(
@@ -767,6 +779,7 @@ export default {
             let maxValue;
 
             // 2020 Data
+            this.getStationDataFromCSV(this.csvData)
             selectedRow = this.CSV2020Data.filter(
               row => row[0] == this.selectedNum
             );
@@ -778,7 +791,10 @@ export default {
               waterLevels = waterLevels.map((value, idx) => {
                 return [this.dates2020[idx], value];
               });
-              result.data2020 = {levels: waterLevels, station_name: `(Найденный гидропост в 2020 г. - ${selectedRow[3]})`};
+              result.data2020 = {
+                levels: waterLevels,
+                station_name: `(Найденный гидропост в 2020 г. - ${selectedRow[3]})`
+              };
               //nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
             }
 
@@ -810,7 +826,10 @@ export default {
               waterLevels = waterLevels.map((value, idx) => {
                 return [this.dates2022[idx], parseFloat(value)];
               });
-              result.data2021 = {levels: waterLevels, station_name: `(Найденный гидропост в 2021 г. - ${selectedRow[4]})`};
+                result.data2021 = {
+                levels: waterLevels,
+                station_name: `(Найденный гидропост в 2021 г. - ${selectedRow[4]})`
+              };
             }
 
             // 2022 data
@@ -832,7 +851,10 @@ export default {
               waterLevels = waterLevels.map((value, idx) => {
                 return [this.dates2022[idx], parseFloat(value)];
               });
-              result.data2022 = {levels: waterLevels, station_name: `(Найденный гидропост в 2022 г. - ${selectedRow[4]})`};
+              result.data2022 = {
+                levels: waterLevels,
+                station_name: `(Найденный гидропост в 2022 г. - ${selectedRow[4]})`
+              };
             }
 
             // 2023 data
@@ -937,10 +959,18 @@ export default {
       }
     },
     optionsGeoJSON() {
-      return {
-        pointToLayer: this.pointToLayer,
-        onEachFeature: this.onEachFeature
-      };
+      if (this.showAnimationControl) {
+        return {
+          onEachFeature: this.onEachFeature,
+          pointToLayer: this.pointToLayer
+        };
+      } else {
+        return {
+          pointToLayer: this.pointToLayer,
+          onEachFeature: this.onEachFeature,
+          filter: this.filterGeojson
+        };
+      }
     },
     pointToLayer() {
       // console.log(isEmpty(this.countEvetns) ? 5 : 10)
@@ -1143,15 +1173,19 @@ export default {
     }
   },
   methods: {
-    getStationData(id) {
+    async getData(url) {
+      const response = await fetch(url);
+      return await response.text();
+    },
+    getStationDataFromCSV(data, id, columnsToSkip = 8) {
       // 2021 data
-      let selectedRow = this.CSV2023Data.filter(row => row[0] == id)[0];
+      let selectedRow = data.filter(row => row[0] == id)[0];
 
       // In table for each dates 5 values are preseneted
       // water level, damaged houses count, damaged children (2 cols), damaged houses count
       // for extracting water levels we extract only each fifth value
       let waterLevels = selectedRow
-        .slice(8)
+        .slice(columnsToSkip)
         .filter((value, idx) => idx % 5 === 0);
       waterLevels = waterLevels.map(value => parseFloat(value));
 
@@ -1221,38 +1255,36 @@ export default {
       data = await addData.json();
       this.addData = data.data;
 
-      const r2020Data = await fetch(
-        `https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv`
-      );
-      data = await r2020Data.text();
-      this.CSV2020Data = this.CSVToArray(data).slice(4);
+      const remoteTables = [
+        {
+          link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv",
+          name: "r2020Data"
+        },
+        {
+          link: "https://docs.google.com/spreadsheets/d/1inv46ksTI-945BjGIWr2SKpiQ4-5Oxy3Ce3-h1QMa40/gviz/tq?tqx=out:csv&range=A6:VF150",
+          name: "r2021Data"
+        },
+        {
+          link: "https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF127",
+          name: "r2022Data"
+        },
+        {
+          link: "https://docs.google.com/spreadsheets/d/1Fj3dAJv_XjkSHipvr4Xw5YsrcPN21usuKKHp79J9kT8/gviz/tq?tqx=out:csv&range=A6:XD135",
+          name: "r2023Data"
+        }
+      ];
 
-      // const r2021Data = await fetch(
-      //   `https://docs.google.com/spreadsheets/d/1c0Ga0bjHiI5koj5YdSfrVLq3yQXYPAGD/gviz/tq?tqx=out:csv&range=A6:VF150`
-      // );
-      // link new
-      const r2021Data = await fetch(
-        `https://docs.google.com/spreadsheets/d/1inv46ksTI-945BjGIWr2SKpiQ4-5Oxy3Ce3-h1QMa40/gviz/tq?tqx=out:csv&range=A6:VF150`
-      );
-      data = await r2021Data.text();
-      this.CSV2021Data = this.CSVToArray(data);
-      // Delete header columns and get only level waters (every 5 columns)
+      const tablesData = {};
+      for (const table of remoteTables) {
+        let data = await this.getData(table.link);
+        data = this.CSVToArray(data);
+        if (table.name === "r2020Data") {
+          data = data.slice(4);
+        }
+        tablesData[table.name] = data;
+      }
+      this.csvData = tablesData;
 
-      const r2022Data = await fetch(
-        `https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF127`
-      );
-      data = await r2022Data.text();
-      this.CSV2022Data = this.CSVToArray(data);
-
-      const r2023Data = await fetch(
-        `https://docs.google.com/spreadsheets/d/1Fj3dAJv_XjkSHipvr4Xw5YsrcPN21usuKKHp79J9kT8/gviz/tq?tqx=out:csv&range=A6:XD135`
-      );
-      data = await r2023Data.text();
-      this.CSV2023Data = this.CSVToArray(data);
-
-      //local
-      //console.log(`${process.env.BASE_URL}data/data.csv`)
-      //const request = await fetch(`${process.env.BASE_URL}data/data.csv`);
       this.processing = false;
     },
     CSVToArray(strData, strDelimiter) {
@@ -1520,11 +1552,7 @@ export default {
     }
   },
   mounted() {
-    //console.log(hydroPosts.features.length);
     this.requestTableData();
-    // this.$nextTick(() => {
-    //   this.geoJson = this.$refs.geoJson.mapObject; // work as expected
-    // });
   },
   components: { LMap, LTileLayer, LGeoJson, LControl }
 };
