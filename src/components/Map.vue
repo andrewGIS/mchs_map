@@ -195,7 +195,7 @@
                 <v-col cols="5" style="z-index: 1000">
                   <v-select
                     solo
-                    :items="dates2023Formatted"
+                    :items="actualFormattedDates"
                     v-model="selectedDate"
                     :disabled="isAnimation"
                   ></v-select>
@@ -399,15 +399,48 @@ Icon.Default.mergeOptions({
   shadowUrl: require("leaflet/dist/images/marker-shadow.png")
 });
 
-Date.prototype.addDays = function(days) {
-  var date = new Date(this.valueOf());
-  date.setDate(date.getDate() + days);
-  return date;
-};
-
 export default {
   data() {
     return {
+      tables: [
+        {
+          link:
+            "https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv",
+          name: "r2020Data",
+          dates: this.getDates(new Date(2020, 3, 16), new Date(2020, 5, 8)),
+          color: "#A0A0A0",
+          needFilter: false,
+          columnsToSkip: 7
+        },
+        {
+          link:
+            "https://docs.google.com/spreadsheets/d/1inv46ksTI-945BjGIWr2SKpiQ4-5Oxy3Ce3-h1QMa40/gviz/tq?tqx=out:csv&range=A6:VF150",
+          name: "r2021Data",
+          dates: this.getDates(new Date(2021, 3, 5), new Date(2021, 4, 31)),
+          color: "#A0A0A0",
+          needFilter: true,
+          columnsToSkip: 8
+        },
+        {
+          link:
+            "https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF127",
+          name: "r2022Data",
+          dates: this.getDates(new Date(2022, 3, 5), new Date(2022, 4, 31)),
+          color: "#A0A0A0",
+          needFilter: true,
+          columnsToSkip: 8
+        },
+        {
+          link:
+            "https://docs.google.com/spreadsheets/d/1Fj3dAJv_XjkSHipvr4Xw5YsrcPN21usuKKHp79J9kT8/gviz/tq?tqx=out:csv&range=A6:XD135",
+          name: "r2023Data",
+          dates: this.getDates(new Date(2023, 2, 27), new Date(2023, 4, 28)),
+          color: "#A0A0A0",
+          needFilter: true,
+          columnsToSkip: 8
+        }
+      ],
+      actualDataName: "r2023Data",
       filterText: "",
       zoom: 6,
       infoShow: true,
@@ -415,10 +448,6 @@ export default {
       gydroPostsLocations: hydroPosts,
       AddGydroPostsLocations: addHydroPosts,
       csvData: null,
-      //CSV2020Data: [],
-      //CSV2021Data: [],
-      //CSV2022Data: [],
-      //CSV2023Data: [],
       dialog: false,
       selectedNum: null,
       setStyle: false,
@@ -442,12 +471,38 @@ export default {
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
   computed: {
+    actualFormattedDates() {
+      return this.getFormattedDates(
+        this.actualTable.dates,
+        this.actualTable.dates[0].getFullYear()
+      );
+    },
+    actualTable() {
+      return this.tables.find(table => table.name === this.actualDataName);
+    },
     actualData() {
       if (!this.csvData) return [];
-      return this.csvData.r2023Data;
+      return this.csvData[this.actualDataName];
+    },
+    tableSeries() {
+      if (!this.clickedData) return [];
+      return this.tables.map(table => {
+        const year = table.dates[0].getFullYear();
+        return {
+          name: `Уровень воды ${year}, см ${
+            this.clickedData[table.name]?.name
+          }`,
+          data: this.clickedData[table.name]?.data,
+          accessibility: {
+            enabled: table.name === this.actualDataName
+          },
+          visible: false,
+          color: table.color
+        };
+      });
     },
     chartOptions() {
-      var ctx = this;
+      const ctx = this;
       return {
         lang: {
           noData: "No data"
@@ -463,68 +518,38 @@ export default {
           enabled: true
         },
         title: {
-          text: this.clickedData.title
+          text: this.clickedData[this.actualDataName].title
         },
-        series: [
-          {
-            name: `Уровень воды 2020, см ${this.clickedData.data2020.station_name}`,
-            data: this.clickedData.data2020.levels,
-            accessibility: {
-              enabled: false
-            },
-            visible: false,
-            color: "#A0A0A0"
-          },
-          {
-            name: `Уровень воды 2021, см ${this.clickedData.data2021.station_name}`,
-            data: this.clickedData.data2021.levels,
-            accessibility: {
-              enabled: false
-            },
-            visible: false,
-            color: "#9d5252"
-          },
-          {
-            name: `Уровень воды 2022, см ${this.clickedData.data2022.station_name}`,
-            data: this.clickedData.data2022.levels,
-            accessibility: {
-              enabled: false
-            },
-            visible: false
-          },
-          {
-            name: "Уровень воды 2023, см",
-            data: this.clickedData.data2023
-          }
-        ],
+        series: this.tableSeries,
         yAxis: [
           {
-            max: this.clickedData.maxValue,
+            max: this.clickedData[this.actualDataName].maxValue,
             title: {
               text: "Уровень воды, см"
             },
-            // ymax: this.clickedData.redLimit + 50,
             plotLines: [
               {
                 color: "blue", // Color value
-                //dashStyle: "longdashdot", // Style of the plot line. Default to solid
-                value: this.clickedData.yellowLimit, // Value of where the line will appear
+                value: this.clickedData[this.actualDataName].yellowLimit, // Value of where the line will appear
                 width: 2, // Width of the line,
                 dashStyle: "shortdash",
                 label: {
                   align: "right",
-                  text: `НЯ от "0" графика поста,  ${this.clickedData.yellowLimit} см`
+                  text: `НЯ от "0" графика поста,  ${
+                    this.clickedData[this.actualDataName].yellowLimit
+                  } см`
                 },
                 zIndex: 1.5
               },
               {
                 color: "red", // Color value
-                //dashStyle: "longdashdot", // Style of the plot line. Default to solid
-                value: this.clickedData.redLimit, // Value of where the line will appear
+                value: this.clickedData[this.actualDataName].redLimit, // Value of where the line will appear
                 width: 2,
                 dashStyle: "shortdash",
                 label: {
-                  text: `ОЯ от "0" графика поста, ${this.clickedData.redLimit} см`
+                  text: `ОЯ от "0" графика поста, ${
+                    this.clickedData[this.actualDataName].redLimit
+                  } см`
                 },
                 zIndex: 1.5 // Width of the line
               }
@@ -533,19 +558,25 @@ export default {
         ],
         xAxis: [
           {
-            //type: this.clickedLayer === "BaseLayer" ? "datetime" : "linear",
             type: "datetime",
-            //categories: this.timeIntervals,
             labels: {
               enabled: false
             },
             title: {
               text: "Сроки измерения"
             },
-            min: this.clickedLayer === "BaseLayer" ? 7372800000 : null,
-            max: this.clickedLayer === "BaseLayer" ? 12679200000 : null
-            //min: 8150400000,
-            //max: 12938400000
+            min:
+              this.clickedLayer === "BaseLayer"
+                ? Math.min(
+                    ...this.actualTable.dates.map(date => this.dateToRelative(date))
+                  )
+                : null,
+            max:
+              this.clickedLayer === "BaseLayer"
+                ? Math.max(
+                    ...this.actualTable.dates.map(date => this.dateToRelative(date))
+                  )
+                : null
           }
         ],
         tooltip: {
@@ -656,13 +687,9 @@ export default {
             plotLines: [
               ...this.multiChartData.map(value => ({
                 color: "blue", // Color value
-                //dashStyle: "longdashdot", // Style of the plot line. Default to solid
                 value: value.level1, // Value of where the line will appear
                 width: 2,
                 dashStyle: "shortdash",
-                // label: {
-                //   text: `ОЯ от "0" графика поста, ${value.level1} см`
-                // },
                 zIndex: 1.5, // Width of the line
                 events: {
                   mouseover: () => {
@@ -707,7 +734,7 @@ export default {
             title: {
               text: "Сроки измерения"
             },
-            min: 7372800000
+            min: Math.min(...this.actualTable.dates) //7372800000
             //min: 8150400000
             //max: 12938400000
             //min: 8150400000,
@@ -728,177 +755,30 @@ export default {
     multiChartData() {
       return this.valuesMulti.map(value => this.getStationDataFromCSV(value));
     },
-    dates2020() {
-      return this.timeIntervals(
-        new Date(2020, 3, 16),
-        new Date(2020, 5, 9),
-        new Date(2020, 0, 1)
-      );
-    },
-    dates2021() {
-      return this.timeIntervals(
-        new Date(2021, 3, 5),
-        new Date(2021, 4, 31),
-        new Date(2021, 0, 1)
-      );
-    },
-    dates2022() {
-      return this.timeIntervals(
-        new Date(2022, 3, 5),
-        new Date(2022, 4, 31),
-        new Date(2022, 0, 1)
-      );
-    },
-    dates2023() {
-      return this.timeIntervals(
-        new Date(2023, 2, 27),
-        new Date(2023, 4, 28),
-        new Date(2023, 0, 1)
-      );
-    },
     selectedDateIndex() {
-      return this.dates2023.indexOf(this.selectedDate);
+      return this.actualTable.indexOf(this.selectedDate);
     },
     clickedData() {
+      const result = {};
       switch (this.clickedLayer) {
         case "BaseLayer":
-          if (
-            this.CSV2020Data &&
-            this.CSV2021Data &&
-            this.CSV2022Data &&
-            this.CSV2023Data &&
-            this.selectedNum
-          ) {
-            let result = {};
-            result.data2020 = { levels: [], station_name: "Не найдено" };
-            result.data2021 = { levels: [], station_name: "Не найдено" };
-            result.data2022 = { levels: [], station_name: "Не найдено" };
-            let selectedRow;
-            let waterLevels;
-            let nonNanArray;
-            let maxValue;
-
-            // 2020 Data
-            this.getStationDataFromCSV(this.csvData)
-            selectedRow = this.CSV2020Data.filter(
-              row => row[0] == this.selectedNum
-            );
-            if (selectedRow.length !== 0) {
-              selectedRow = selectedRow[0];
-              waterLevels = selectedRow
-                .slice(7)
-                .map(value => parseFloat(value));
-              waterLevels = waterLevels.map((value, idx) => {
-                return [this.dates2020[idx], value];
-              });
-              result.data2020 = {
-                levels: waterLevels,
-                station_name: `(Найденный гидропост в 2020 г. - ${selectedRow[3]})`
-              };
-              //nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+          if (this.selectedNum) {
+            for (const table of this.tables) {
+              const table_name = table.name;
+              result[table_name] = this.getStationDataFromCSV(
+                this.csvData[table_name],
+                this.selectedNum,
+                table.dates,
+                table.columnsToSkip,
+                table.needFilter
+              );
             }
-
-            // 2021 measure starts from 05.04.2021,
-            // 2020 measures started from 17.04.2021
-            // shift values for graph and fill with value
-            // const shiftCount = 12;
-            // const fillValue = NaN;
-            // waterLevels.unshift(
-            //   ...Array.from({ length: shiftCount }, () => fillValue)
-            // );
-
-            // 2021 data
-            selectedRow = this.CSV2021Data.filter(
-              row => row[0] == this.selectedNum
-            )[0];
-
-            // In table for each dates 5 values are preseneted
-            // water level, damaged houses count, damaged children (2 cols), damaged houses count
-            // for extracting water levels we extract only each fifth value
-            if (selectedRow && selectedRow.length !== 0) {
-              waterLevels = selectedRow
-                .slice(8)
-                .filter((value, idx) => idx % 5 === 0);
-              waterLevels = waterLevels.map(value => parseFloat(value));
-              nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-              maxValue = Math.max(...nonNanArray);
-
-              waterLevels = waterLevels.map((value, idx) => {
-                return [this.dates2022[idx], parseFloat(value)];
-              });
-                result.data2021 = {
-                levels: waterLevels,
-                station_name: `(Найденный гидропост в 2021 г. - ${selectedRow[4]})`
-              };
-            }
-
-            // 2022 data
-            selectedRow = this.CSV2022Data.filter(
-              row => row[0] == this.selectedNum
-            )[0];
-
-            // In table for each dates 5 values are preseneted
-            // water level, damaged houses count, damaged children (2 cols), damaged houses count
-            // for extracting water levels we extract only each fifth value
-            if (selectedRow && selectedRow.length !== 0) {
-              waterLevels = selectedRow
-                .slice(8)
-                .filter((value, idx) => idx % 5 === 0);
-              waterLevels = waterLevels.map(value => parseFloat(value));
-              nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-              maxValue = Math.max(...nonNanArray);
-
-              waterLevels = waterLevels.map((value, idx) => {
-                return [this.dates2022[idx], parseFloat(value)];
-              });
-              result.data2022 = {
-                levels: waterLevels,
-                station_name: `(Найденный гидропост в 2022 г. - ${selectedRow[4]})`
-              };
-            }
-
-            // 2023 data
-            selectedRow = this.CSV2023Data.filter(
-              row => row[0] == this.selectedNum
-            )[0];
-            waterLevels = selectedRow
-              .slice(8)
-              .filter((value, idx) => idx % 5 === 0);
-            waterLevels = waterLevels.map(value => parseFloat(value));
-
-            nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-            maxValue = Math.max(...nonNanArray);
-
-            waterLevels = waterLevels.map((value, idx) => {
-              return [this.dates2023[idx], parseFloat(value)];
-            });
-
-            const yellowLimitValue = parseFloat(selectedRow[5]);
-            const redLimitValue = parseFloat(selectedRow[6]);
-            // set limit lines
-
-            const maxObservedValue =
-              maxValue > redLimitValue ? maxValue + 100 : redLimitValue;
-
-            result.data2023 = waterLevels;
-            result.title = `Номер в списке: ${selectedRow[0]}, Название: ${selectedRow[2]}`;
-            result.yellowLimit = yellowLimitValue;
-            result.redLimit = redLimitValue;
-            result.maxValue = maxObservedValue;
-
             return result;
           } else {
-            return {
-              data2020: { levels: [], station_name: "Не найдено" },
-              data2021: { levels: [], station_name: "Не найдено" },
-              data2022: { levels: [], station_name: "Не найдено" },
-              data2023: [],
-              data: [],
-              title: "",
-              yellowLimit: 0,
-              redLImit: 0,
-              maxValue: 0
-            };
+            for (const table of this.tables) {
+              result[table.name] = { levels: [], station_name: "Не найдено" };
+            }
+            return result;
           }
         case "ESIMO":
           var selectedStation;
@@ -945,17 +825,10 @@ export default {
             maxValue
           };
         default:
-          return {
-            data2020: [],
-            data2021: [],
-            data2022: [],
-            oldData: [],
-            data: [],
-            title: [],
-            yellowLimit: 0,
-            redLImit: 0,
-            maxValue: 0
-          };
+          for (const table of this.tables) {
+            result[table.name] = { levels: [], station_name: "Не найдено" };
+          }
+          return result;
       }
     },
     optionsGeoJSON() {
@@ -1055,10 +928,6 @@ export default {
               this.clickedLayer = "BaseLayer";
               this.selectedNum = e.target.feature.properties.N;
               this.dialog = true;
-              // layer.openPopup("Hi!");
-              // e.layer.setStyle({
-              //   weight: 5
-              // })
             }
           });
         } else {
@@ -1085,35 +954,17 @@ export default {
       };
     },
     selectedRowData() {
-      return this.CSV2023Data.filter(
-        row => row[0] == this.selectedNum
-      )[0].slice(8);
+      return this.actualData.slice(8);
     },
-    dates2021Formatted() {
-      return this.dates2021.map(value =>
-        //shift date for display correct time in UTC +0500 zone
-        {
-          let date = new Date(value);
-          date.setFullYear(2021);
-          return {
-            text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
-            value
-          };
-        }
-      );
-    },
-    dates2022Formatted() {
-      return this.dates2022.map(value =>
-        //shift date for display correct time in UTC +0500 zone
-        {
-          let date = new Date(value);
-          date.setFullYear(2022);
-          return {
-            text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
-            value
-          };
-        }
-      );
+    getFormattedDates(dates, year) {
+      return dates.map(value => {
+        let date = new Date(date);
+        date.setFullYear(year);
+        return {
+          text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
+          value
+        };
+      });
     },
     dates2023Formatted() {
       return this.dates2023.map(value =>
@@ -1173,25 +1024,63 @@ export default {
     }
   },
   methods: {
+    // date from start of year
+    dateToRelative(date) {
+      return new Date(
+        date - Date.parse(`${date.getFullYear()}-01-01`)
+      ).valueOf();
+    },
+    getDates(from, to) {
+      const cFrom = new Date(from);
+      const cTo = new Date(to);
+
+      const daysArr = [];
+      let tempDate = cFrom;
+
+      while (tempDate < cTo) {
+        daysArr.push(new Date(tempDate.setHours(8)));
+        daysArr.push(new Date(tempDate.setHours(18)));
+        tempDate.setDate(tempDate.getDate() + 1);
+      }
+
+      return daysArr;
+    },
     async getData(url) {
       const response = await fetch(url);
       return await response.text();
     },
-    getStationDataFromCSV(data, id, columnsToSkip = 8) {
-      // 2021 data
-      let selectedRow = data.filter(row => row[0] == id)[0];
+    getStationDataFromCSV(
+      data,
+      id,
+      dates,
+      columnsToSkip = 8,
+      needFilter = true
+    ) {
+      const selectedRow = data.filter(row => row[0] == id)[0];
 
       // In table for each dates 5 values are preseneted
       // water level, damaged houses count, damaged children (2 cols), damaged houses count
       // for extracting water levels we extract only each fifth value
-      let waterLevels = selectedRow
-        .slice(columnsToSkip)
-        .filter((value, idx) => idx % 5 === 0);
+      let waterLevels = selectedRow.slice(columnsToSkip);
+      if (needFilter) {
+        waterLevels = waterLevels.filter((value, idx) => idx % 5 === 0);
+      }
       waterLevels = waterLevels.map(value => parseFloat(value));
-
       waterLevels = waterLevels.map((value, idx) => {
-        return [this.dates2023[idx], parseFloat(value)];
+        let date;
+        try {
+          date = this.dateToRelative(dates[idx]);
+        } catch {
+          date = null;
+        }
+
+        return [date, parseFloat(value)];
       });
+
+      const nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+      const maxValue = Math.max(...nonNanArray);
+      const maxObservedValue =
+        maxValue > redLimitValue ? maxValue + 100 : redLimitValue;
 
       const yellowLimitValue = parseFloat(selectedRow[5]);
       const redLimitValue = parseFloat(selectedRow[6]);
@@ -1200,23 +1089,10 @@ export default {
         id: id,
         name: `${selectedRow[1]}, ${selectedRow[2]}`,
         data: waterLevels,
-        level1: yellowLimitValue,
-        level2: redLimitValue
+        yellowLimit: yellowLimitValue,
+        redLimit: redLimitValue,
+        maxValue: maxObservedValue
       };
-    },
-    timeIntervals(startDate, endDate, baseDate) {
-      // Shift in month index JS
-      //let startDate = new Date(2021, 3, 5);
-      //let endDate = new Date(2021, 5, 31);
-
-      let dateArray = [];
-      let currentDate = startDate;
-      while (currentDate <= endDate) {
-        dateArray.push(currentDate.setHours(8) - baseDate);
-        dateArray.push(currentDate.setHours(18) - baseDate);
-        currentDate = currentDate.addDays(1);
-      }
-      return dateArray;
     },
     stopAnimation() {
       clearInterval(this.timer);
@@ -1255,27 +1131,8 @@ export default {
       data = await addData.json();
       this.addData = data.data;
 
-      const remoteTables = [
-        {
-          link: "https://docs.google.com/spreadsheets/d/e/2PACX-1vSExk-xC5mNfpyh_Ul5iyXkftuMdcgsLHEqCpyvCaEhUFlDXQaX6aqv_uCclYBO_g/pub?gid=1875061110&single=true&output=csv",
-          name: "r2020Data"
-        },
-        {
-          link: "https://docs.google.com/spreadsheets/d/1inv46ksTI-945BjGIWr2SKpiQ4-5Oxy3Ce3-h1QMa40/gviz/tq?tqx=out:csv&range=A6:VF150",
-          name: "r2021Data"
-        },
-        {
-          link: "https://docs.google.com/spreadsheets/d/1A9XakXmUinbT9ee5nesoYiJGoLR9O6xpL24N-aEEW8Y/gviz/tq?tqx=out:csv&range=A6:VF127",
-          name: "r2022Data"
-        },
-        {
-          link: "https://docs.google.com/spreadsheets/d/1Fj3dAJv_XjkSHipvr4Xw5YsrcPN21usuKKHp79J9kT8/gviz/tq?tqx=out:csv&range=A6:XD135",
-          name: "r2023Data"
-        }
-      ];
-
       const tablesData = {};
-      for (const table of remoteTables) {
+      for (const table of this.tables) {
         let data = await this.getData(table.link);
         data = this.CSVToArray(data);
         if (table.name === "r2020Data") {
