@@ -489,14 +489,15 @@ export default {
       return this.tables.map(table => {
         const year = table.dates[0].getFullYear();
         return {
-          name: `Уровень воды ${year}, см ${
+          name: `Уровень воды ${year} см, ${
             this.clickedData[table.name]?.name
           }`,
+          id: table.name,
           data: this.clickedData[table.name]?.data,
           accessibility: {
             enabled: table.name === this.actualDataName
           },
-          visible: false,
+          visible: table.name === this.actualDataName,
           color: table.color
         };
       });
@@ -568,13 +569,17 @@ export default {
             min:
               this.clickedLayer === "BaseLayer"
                 ? Math.min(
-                    ...this.actualTable.dates.map(date => this.dateToRelative(date))
+                    ...this.actualTable.dates.map(date =>
+                      this.dateToRelative(date)
+                    )
                   )
                 : null,
             max:
               this.clickedLayer === "BaseLayer"
                 ? Math.max(
-                    ...this.actualTable.dates.map(date => this.dateToRelative(date))
+                    ...this.actualTable.dates.map(date =>
+                      this.dateToRelative(date)
+                    )
                   )
                 : null
           }
@@ -584,51 +589,48 @@ export default {
             let date;
             switch (ctx.clickedLayer) {
               case "BaseLayer":
-                if (this.series.name === "Уровень воды 2023, см") {
+                if (this.series.options.id === ctx.actualDataName) {
                   date = new Date(this.x);
-                  date.setFullYear(2023);
+                  date.setFullYear(ctx.actualTable.dates[0].getFullYear());
+                  const dateIdx = ctx.actualTable.dates.findIndex(
+                    d => Number(d) === Number(date)
+                  );
 
-                  const dateIdx = ctx.dates2023.indexOf(this.x);
-                  const damagedHouses = ctx.selectedRowData
-                    .slice(1)
-                    .filter((value, idx) => {
-                      if (idx % 5 === 0) return value;
-                    });
+                  const baseMessage = `Уровень воды 2023, см: <br> на ${date.toLocaleString()}:<b>${
+                    this.y
+                  }`;
 
-                  const damagedPopulation = ctx.selectedRowData
-                    .slice(2)
-                    .filter((value, idx) => {
-                      if (idx % 5 === 0) return value;
-                    });
+                  const infos = [
+                    {
+                      startIndex: 1,
+                      name: "Количество подтопленных жилых домов"
+                    },
+                    {
+                      startIndex: 2,
+                      name: "Количество населения в зоне подтопления (общее)"
+                    },
+                    {
+                      startIndex: 3,
+                      name: "Количество населения в зоне подтопления (детей)"
+                    },
+                    {
+                      startIndex: 4,
+                      name:
+                        "Количество участков, приусадебных территорий в зоне подтопления"
+                    }
+                  ];
 
-                  const damagedKids = ctx.selectedRowData
-                    .slice(3)
-                    .filter((value, idx) => {
-                      if (idx % 5 === 0) return value;
-                    });
-
-                  const maxPossibleDamagedHouses = ctx.selectedRowData
-                    .slice(4)
-                    .filter((value, idx) => {
-                      if (idx % 5 === 0) return value;
-                    });
-
-                  return `Уровень воды 2023, см: <br> на ${new Date(
-                    date - 3600 * 5 * 1000 // shift date for display correct time in UTC +0500 zone
-                  ).toLocaleString()}:<b>${this.y}</b> 
-              <br>Количество подтопленных жилых домов - ${
-                damagedHouses[dateIdx]
-              }
-              <br>Количество населения в зоне подтопления (общее) - ${
-                damagedPopulation[dateIdx]
-              }
-              <br>Количество населения в зоне подтопления (детей) - ${
-                damagedKids[dateIdx]
-              }
-              <br>Количество участков, приусадебных территорий в зоне подтопления - ${
-                maxPossibleDamagedHouses[dateIdx]
-              }
-              `;
+                  const addInfo = infos.map(info => {
+                    const value = ctx.selectedRowData
+                      //TODO fix
+                      .slice(8 + info.startIndex)
+                      .filter((value, idx) => {
+                        if (idx % 5 === 0) return value;
+                      });
+                    console.log(value);
+                    return `<br>${info.name} - ${value[dateIdx]}`;
+                  });
+                  return [baseMessage, ...addInfo].join();
                 } else {
                   date = new Date(this.x);
                   date.setFullYear(2020);
@@ -954,30 +956,17 @@ export default {
       };
     },
     selectedRowData() {
-      return this.actualData.slice(8);
+      return this.actualData.find(row => Number(row[0]) === this.selectedNum);
     },
     getFormattedDates(dates, year) {
       return dates.map(value => {
         let date = new Date(date);
         date.setFullYear(year);
         return {
-          text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
+          text: date.toLocaleString(),
           value
         };
       });
-    },
-    dates2023Formatted() {
-      return this.dates2023.map(value =>
-        //shift date for display correct time in UTC +0500 zone
-        {
-          let date = new Date(value);
-          date.setFullYear(2023);
-          return {
-            text: new Date(date - 3600 * 5 * 1000).toLocaleString(),
-            value
-          };
-        }
-      );
     },
     optionLabels() {
       return {
@@ -1024,7 +1013,6 @@ export default {
     }
   },
   methods: {
-    // date from start of year
     dateToRelative(date) {
       return new Date(
         date - Date.parse(`${date.getFullYear()}-01-01`)
