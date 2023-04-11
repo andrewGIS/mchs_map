@@ -8,7 +8,7 @@
       <v-btn
         text
         v-if="!showAnimationControl && !$vuetify.breakpoint.xsOnly"
-        @click="setStandartStyle"
+        @click="clearFilter"
       >
         <v-icon left>mdi-filter-remove</v-icon>Показать все станции
       </v-btn>
@@ -209,7 +209,7 @@
                         v-on="on"
                         :disabled="
                           isAnimation ||
-                            selectedDateIndex === dates2023.length - 1
+                            selectedDateIndex === actualTable.dates.length - 1
                         "
                       >
                         <v-icon class="group pa-2" :size="25"
@@ -271,18 +271,16 @@
 
           <l-tile-layer :url="url"></l-tile-layer>
           <l-geo-json
+            v-if="isFilter"
             ref="geoJson"
             :geojson="gydroPostsLocations"
-            :options="optionsGeoJSON"
+            :options="optionsBaseGeoJSON"
           ></l-geo-json>
           <l-geo-json
+            v-if="isFilter"
             ref="labelgeoJson"
             :geojson="gydroPostsLocations"
-            :options="
-              !showAnimationControl
-                ? { ...optionLabels, filter: this.filterGeojson }
-                : { ...optionLabels }
-            "
+            :options="optionsLabelGeoJSON"
           ></l-geo-json>
           <l-geo-json
             ref="geoJsonAdd"
@@ -290,9 +288,9 @@
             :options="optionsGeoJSON"
           ></l-geo-json>
           <l-geo-json
-            :visible="GTSVisible"
+            :visible="gtsVisible"
             ref="GTS"
-            :geojson="GTSData"
+            :geojson="gtsData"
             :options="optionsGeoJSON"
           ></l-geo-json>
           <l-control :position="'bottomleft'">
@@ -330,8 +328,8 @@
                   <template v-slot:activator="{ on, attrs }">
                     <v-row
                       class="GTSLayer"
-                      :class="[GTSVisible ? 'layer_enabled' : 'layer_disabled']"
-                      @click="GTSVisible = !GTSVisible"
+                      :class="[gtsVisible ? 'layer_enabled' : 'layer_disabled']"
+                      @click="gtsVisible = !gtsVisible"
                       v-bind="attrs"
                       v-on="on"
                     >
@@ -390,6 +388,7 @@ import { LControl, LGeoJson, LMap, LTileLayer } from "vue2-leaflet";
 import { hydroPosts } from "@/assets/gydroPostsLocation";
 import { addHydroPosts } from "@/assets/addGydroPostsLocation";
 import { GTS } from "@/assets/GTS";
+import { filter } from "core-js/internals/array-iteration";
 // import { data } from process.env.BASE_URL+"public/addData.js";
 
 delete Icon.Default.prototype._getIconUrl;
@@ -402,6 +401,7 @@ Icon.Default.mergeOptions({
 export default {
   data() {
     return {
+      isFilter: true,
       tables: [
         {
           link:
@@ -447,12 +447,12 @@ export default {
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       gydroPostsLocations: hydroPosts,
       addGydroPostsLocations: addHydroPosts,
+      gtsData: GTS,
+      gtsVisible: false,
       csvData: null,
       dialog: false,
       selectedNum: null,
       setStyle: false,
-      recalcToRed: false,
-      zeroData: false,
       showAnimationControl: false,
       selectedDate: null,
       isAnimation: false,
@@ -461,21 +461,28 @@ export default {
       clickedLayer: "",
       processing: false,
       settedLimitedStyle: false,
-      GTSData: GTS,
-      GTSVisible: false,
       dialogMultiChart: false,
       valuesMulti: [],
       selectedLevel: "-",
+      basePointStyle: {
+        radius: 5,
+        color: "#000",
+        weight: 1,
+        opacity: 1,
+        fillOpacity: 0.8
+      },
       info: document.lastModified
     };
     //https://sheets.googleapis.com/v4/spreadsheets/1y_fN6NlTw_XVpEK4mlt-EUD5koA1JsNk/values/Уровни воды 107 ВВП!A1:D5
   },
   computed: {
     actualFormattedDates() {
-      return this.getFormattedDates(
-        this.actualTable.dates,
-        this.actualTable.dates[0].getFullYear()
-      );
+      return this.actualTable.dates.map(date => {
+        return {
+          value: date,
+          text: date.toLocaleString()
+        };
+      });
     },
     actualTable() {
       return this.tables.find(table => table.name === this.actualDataName);
@@ -764,7 +771,7 @@ export default {
       return this.valuesMulti.map(value => this.getStationDataFromCSV(value));
     },
     selectedDateIndex() {
-      return this.actualTable.indexOf(this.selectedDate);
+      return this.actualTable.dates.indexOf(this.selectedDate);
     },
     clickedData() {
       const result = {};
@@ -773,13 +780,16 @@ export default {
           if (this.selectedNum) {
             for (const table of this.tables) {
               const table_name = table.name;
-              result[table_name] = this.getStationDataFromCSV(
+              const stationData = this.getStationDataFromCSV(
                 this.csvData[table_name],
                 this.selectedNum,
                 table.dates,
                 table.columnsToSkip,
                 table.needFilter
               );
+              if (stationData) {
+                result[table_name] = stationData;
+              }
             }
             return result;
           } else {
@@ -840,53 +850,45 @@ export default {
       }
     },
     optionsGeoJSON() {
-      if (this.showAnimationControl) {
-        return {
-          onEachFeature: this.onEachFeature,
-          pointToLayer: this.pointToLayer
-        };
-      } else {
-        return {
-          pointToLayer: this.pointToLayer,
-          onEachFeature: this.onEachFeature,
-          filter: this.filterGeojson
-        };
-      }
+      return {
+        onEachFeature: this.onEachFeature,
+        pointToLayer: this.pointToLayer
+      };
+    },
+    optionsBaseGeoJSON() {
+      return {
+        onEachFeature: this.onEachFeature,
+        pointToLayer: this.pointToLayer,
+        filter: this.filterGeojson
+      };
+    },
+    optionsLabelGeoJSON() {
+      return {
+        pointToLayer: this.pointToLayerLabel,
+        filter: this.filterGeojson
+      };
     },
     pointToLayer() {
-      // console.log(isEmpty(this.countEvetns) ? 5 : 10)
       return (feature, latlng) => {
         // For Esimo points
         if (Object.prototype.hasOwnProperty.call(feature.properties, "m4202")) {
           return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "#4ED8F5",
-            color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
+            ...this.basePointStyle,
+            fillColor: "#4ED8F5"
           });
         } else if (
           Object.prototype.hasOwnProperty.call(feature.properties, "N")
         ) {
           // Base layer style
           return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "#ff7800",
-            color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
+            ...this.basePointStyle,
+            fillColor: "#ff7800"
           });
         } else {
           // GTS layer
           return L.circleMarker(latlng, {
-            radius: 5,
-            fillColor: "#4245f5",
-            color: "#000",
-            weight: 1,
-            opacity: 1,
-            fillOpacity: 0.8
+            ...this.basePointStyle,
+            fillColor: "#4245f5"
           });
         }
       };
@@ -905,12 +907,6 @@ export default {
               this.clickedLayer = "ESIMO";
               this.selectedNum = e.target.feature.properties.m4200;
               this.dialog = true;
-              //console.log(e.target.feature.properties.m4200);
-              //this.getAddDataInfo(e.target.feature.properties.m4200);
-              // layer.openPopup("Hi!");
-              // e.layer.setStyle({
-              //   weight: 5
-              // })
             }
           });
         } else if (
@@ -966,29 +962,11 @@ export default {
         .find(row => Number(row[0]) === this.selectedNum)
         .slice(8);
     },
-    getFormattedDates(dates, year) {
-      return dates.map(value => {
-        let date = new Date(date);
-        date.setFullYear(year);
-        return {
-          text: date.toLocaleString(),
-          value
-        };
-      });
-    },
-    optionLabels() {
-      return {
-        pointToLayer: this.pointToLayerLabel
-      };
-    },
     pointToLayerLabel() {
       if (!this.showLabels) {
         return (feature, latlng) => {
           return L.circleMarker(latlng, {
-            fillColor: "#ff7800",
             radius: 0,
-            color: "#000",
-            weight: 1,
             opacity: 0.0,
             fillOpacity: 0.0
           });
@@ -1021,6 +999,7 @@ export default {
     }
   },
   methods: {
+    filter,
     dateToRelative(date) {
       return new Date(
         date - Date.parse(`${date.getFullYear()}-01-01`)
@@ -1052,7 +1031,18 @@ export default {
       columnsToSkip = 8,
       needFilter = true
     ) {
-      const selectedRow = data.filter(row => row[0] == id)[0];
+      const selectedRow = data.filter(row => Number(row[0]) === id)[0];
+      if (!selectedRow) {
+        console.warn(`Не найдена запись в таблице с ID ${id}`);
+        return {
+          id: id,
+          name: "Не найдено",
+          data: [],
+          yellowLimit: null,
+          redLimit: null,
+          maxValue: null
+        };
+      }
 
       // In table for each dates 5 values are preseneted
       // water level, damaged houses count, damaged children (2 cols), damaged houses count
@@ -1099,26 +1089,24 @@ export default {
     },
     startAnimation() {
       this.isAnimation = true;
-      //this.request = requestAnimationFrame(this.animation)
       let index = this.selectedDateIndex;
       this.timer = setInterval(() => {
-        if (index < this.dates2023.length) {
-          this.selectedDate = this.dates2023[index];
+        if (index < this.actualTable.dates.length) {
+          this.selectedDate = this.actualTable.dates[index];
           index += 1;
         }
       }, 500);
-      // let index = this.selectedDateIndex;
     },
     nextDate() {
-      this.selectedDate = this.dates2023[this.selectedDateIndex + 1];
+      this.selectedDate = this.actualTable.dates[this.selectedDateIndex + 1];
     },
     prevDate() {
-      this.selectedDate = this.dates2023[this.selectedDateIndex - 1];
+      this.selectedDate = this.actualTable.dates[this.selectedDateIndex - 1];
     },
     toggleAnimationControl() {
       if (this.showAnimationControl) this.setStandartStyle(); // set default style
       this.showAnimationControl = !this.showAnimationControl;
-      this.selectedDate = this.selectedDate ? null : this.dates2023[0];
+      this.selectedDate = this.selectedDate ? null : this.actualTable.dates[0];
       this.infoShow = true;
     },
     async requestTableData() {
@@ -1219,32 +1207,21 @@ export default {
       // 5 column  index of this value 5
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
-          const count = [];
           this.$refs.geoJson.mapObject.eachLayer(layer => {
-            count.push(layer.feature.properties.N);
-            //this.$refs.geoJson.mapObject.setStyle(layer => {
-            let stationData = this.CSV2023Data.filter(
-              row => parseInt(row[0]) === layer.feature.properties.N
-            )[0];
-
-            console.log(layer.feature.properties.N);
-
-            let datesValues = stationData
-              .slice(8)
-              .filter((_, idx) => idx % 5 === 0);
-            datesValues = datesValues.map(value => parseFloat(value));
-            let yellowLimit = parseFloat(stationData[5]);
-            let redLimit = parseFloat(stationData[6]);
-            // get last non empty value
-            // let lastNonZeroValue = parseFloat(
-            //   datesValues[datesValues.indexOf("") - 1]
-            // );
-            const nonNanArray = datesValues.filter(
-              value => !Number.isNaN(value)
+            const info = this.getStationDataFromCSV(
+              this.csvData[this.actualDataName],
+              layer.feature.properties.N,
+              this.actualTable.dates,
+              this.actualTable.columnsToSkip,
+              this.actualTable.needFilter
             );
 
+            //[date, value] => [value]
+            const nonNanArray = info.data
+              .map(value => value[1])
+              .filter(value => !Number.isNaN(value));
+
             let lastNonZeroValue = nonNanArray.slice(-1)[0];
-            //console.log(lastNonZeroValue, yellowLimit, redLimit);
             const maxValue =
               nonNanArray.length === 0 ? 0.0 : Math.max(...nonNanArray);
             let style;
@@ -1252,8 +1229,8 @@ export default {
             // if above red return red
             // default "#ff7800"
             if (
-              lastNonZeroValue >= yellowLimit &&
-              lastNonZeroValue < redLimit
+              lastNonZeroValue >= info.yellowLimit &&
+              lastNonZeroValue < info.redLimit
             ) {
               style = {
                 radius: 7,
@@ -1263,8 +1240,10 @@ export default {
                 opacity: 1,
                 fillOpacity: 0.8
               };
-            } else if (lastNonZeroValue >= redLimit && redLimit != 0.0) {
-              // color = "red";
+            } else if (
+              lastNonZeroValue >= info.redLimit &&
+              info.redLimit !== 0.0
+            ) {
               style = {
                 radius: 10,
                 fillColor: "red",
@@ -1273,7 +1252,7 @@ export default {
                 opacity: 1,
                 fillOpacity: 0.8
               };
-            } else if (maxValue == 0.0) {
+            } else if (maxValue === 0.0) {
               style = {
                 radius: 0.01,
                 fillColor: "#ff7800",
@@ -1283,7 +1262,6 @@ export default {
                 fillOpacity: 0.01
               };
             } else {
-              // color = "#ff7800";
               style = {
                 radius: 0.01,
                 fillColor: "#ff7800",
@@ -1295,36 +1273,12 @@ export default {
             }
             layer.setStyle(style);
           });
-          console.log(`Всего станци ${count.length}`);
-          console.log(count);
-        }
-      });
-    },
-    setValueStyle() {
-      //this.settedLimtedStyle = true;
-      this.$nextTick(() => {
-        if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
-          this.$refs.geoJson.mapObject.eachLayer(layer => {
-            layer.setStyle({
-              radius:
-                parseInt(
-                  this.CSVData.filter(
-                    row => parseInt(row[0]) === layer.feature.properties.N
-                  )[0][5]
-                ) / 100
-            });
-          });
         }
       });
     },
     setStandartStyle() {
       this.settedLimitedStyle = false;
-      this.filterText = "";
-      // if (this.zoom > 8) {
-      //   this.showLabels = true;
-      // } else {
-      //   this.showLabels = false;
-      // }
+      //this.filterText = null;
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
@@ -1342,30 +1296,35 @@ export default {
     },
     zoomUpdate(zoom) {
       this.zoom = zoom;
+    },
+    clearFilter() {
+      this.filterText = "";
+      // this.filter = false;
+      // this.$nextTick(() => {
+      //   this.filter = true;
+      // });
     }
   },
   watch: {
     selectedDate: function() {
-      console.log("date change");
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
           //if (this.$refs.geoJson) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
             // define radius
-            const stationData = this.CSV2023Data.filter(
-              row => parseInt(row[0]) === layer.feature.properties.N
-            )[0];
-            let datesValues = stationData
-              .slice(8)
-              .filter((value, idx) => idx % 5 === 0);
-
-            datesValues = datesValues.map(value => parseFloat(value));
-            datesValues = datesValues.map(value =>
-              Number.isNaN(value) ? 0 : value
+            const info = this.getStationDataFromCSV(
+              this.csvData[this.actualDataName],
+              layer.feature.properties.N,
+              this.actualTable.dates,
+              this.actualTable.columnsToSkip,
+              this.actualTable.needFilter
             );
-            //const datesValues = stationData.slice(8);
-            const yellowLimit = parseFloat(stationData[6]);
-            const selectedLevelValue = datesValues[this.selectedDateIndex];
+            const yellowLimit = info.yellowLimit;
+            const values = info.data
+              .map(value => value[1])
+              .map(value => (Number.isNaN(value) ? 0 : value));
+            const selectedLevelValue = values[this.selectedDateIndex];
+
             let style = {};
             if (
               yellowLimit === 0.0 ||
@@ -1403,6 +1362,13 @@ export default {
             layer.setStyle(style);
           });
         }
+      });
+    },
+    // https://github.com/vue-leaflet/Vue2Leaflet/issues/217
+    filterText: function() {
+      this.isFilter = false;
+      this.$nextTick(() => {
+        this.isFilter = true;
       });
     }
   },
