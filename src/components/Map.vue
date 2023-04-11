@@ -286,7 +286,7 @@
           ></l-geo-json>
           <l-geo-json
             ref="geoJsonAdd"
-            :geojson="AddGydroPostsLocations"
+            :geojson="addGydroPostsLocations"
             :options="optionsGeoJSON"
           ></l-geo-json>
           <l-geo-json
@@ -446,7 +446,7 @@ export default {
       infoShow: true,
       url: "https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png",
       gydroPostsLocations: hydroPosts,
-      AddGydroPostsLocations: addHydroPosts,
+      addGydroPostsLocations: addHydroPosts,
       csvData: null,
       dialog: false,
       selectedNum: null,
@@ -589,14 +589,16 @@ export default {
             let date;
             switch (ctx.clickedLayer) {
               case "BaseLayer":
+                // Информация по текущему году
                 if (this.series.options.id === ctx.actualDataName) {
                   date = new Date(this.x);
-                  date.setFullYear(ctx.actualTable.dates[0].getFullYear());
+                  const actualYear = ctx.actualTable.dates[0].getFullYear();
+                  date.setFullYear(actualYear);
                   const dateIdx = ctx.actualTable.dates.findIndex(
                     d => Number(d) === Number(date)
                   );
 
-                  const baseMessage = `Уровень воды 2023, см: <br> на ${date.toLocaleString()}:<b>${
+                  const baseMessage = `Уровень воды ${actualYear}, см: <br> на ${date.toLocaleString()}:<b>${
                     this.y
                   }`;
 
@@ -622,21 +624,25 @@ export default {
 
                   const addInfo = infos.map(info => {
                     const value = ctx.selectedRowData
-                      //TODO fix
-                      .slice(8 + info.startIndex)
+                      .slice(info.startIndex)
                       .filter((value, idx) => {
                         if (idx % 5 === 0) return value;
                       });
-                    console.log(value);
                     return `<br>${info.name} - ${value[dateIdx]}`;
                   });
+
                   return [baseMessage, ...addInfo].join();
                 } else {
+                  // Информация по другим годам
                   date = new Date(this.x);
-                  date.setFullYear(2020);
-                  return `Уровень воды 2020, см: ${new Date(
-                    date - 3600 * 5 * 1000
-                  ).toLocaleString()}:${this.y}`;
+                  const archiveSeries = ctx.tables.find(
+                    table => table.name === this.series.options.id
+                  );
+                  const archiveYear = archiveSeries.dates[0].getFullYear();
+                  date.setFullYear(archiveYear);
+                  return `Уровень воды ${archiveYear}, см: ${date.toLocaleString()}:${
+                    this.y
+                  }`;
                 }
               case "ESIMO":
                 date = new Date(this.x);
@@ -956,7 +962,9 @@ export default {
       };
     },
     selectedRowData() {
-      return this.actualData.find(row => Number(row[0]) === this.selectedNum);
+      return this.actualData
+        .find(row => Number(row[0]) === this.selectedNum)
+        .slice(8);
     },
     getFormattedDates(dates, year) {
       return dates.map(value => {
@@ -1054,7 +1062,17 @@ export default {
         waterLevels = waterLevels.filter((value, idx) => idx % 5 === 0);
       }
       waterLevels = waterLevels.map(value => parseFloat(value));
-      waterLevels = waterLevels.map((value, idx) => {
+
+      const nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
+      const maxValue = Math.max(...nonNanArray);
+      const yellowLimitValue = parseFloat(selectedRow[5]);
+      const redLimitValue = parseFloat(selectedRow[6]);
+      const maxObservedValue =
+        maxValue > redLimitValue
+          ? maxValue + 100
+          : redLimitValue + 0.1 * redLimitValue;
+
+      const waterLevelsWithDates = waterLevels.map((value, idx) => {
         let date;
         try {
           date = this.dateToRelative(dates[idx]);
@@ -1065,18 +1083,10 @@ export default {
         return [date, parseFloat(value)];
       });
 
-      const nonNanArray = waterLevels.filter(value => !Number.isNaN(value));
-      const maxValue = Math.max(...nonNanArray);
-      const maxObservedValue =
-        maxValue > redLimitValue ? maxValue + 100 : redLimitValue;
-
-      const yellowLimitValue = parseFloat(selectedRow[5]);
-      const redLimitValue = parseFloat(selectedRow[6]);
-
       return {
         id: id,
         name: `${selectedRow[1]}, ${selectedRow[2]}`,
-        data: waterLevels,
+        data: waterLevelsWithDates,
         yellowLimit: yellowLimitValue,
         redLimit: redLimitValue,
         maxValue: maxObservedValue
