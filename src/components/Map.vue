@@ -526,7 +526,7 @@ export default {
           enabled: true
         },
         title: {
-          text: this.clickedData[this.actualDataName].title
+          text: this.selectedName
         },
         series: this.tableSeries,
         yAxis: [
@@ -664,7 +664,7 @@ export default {
     },
     stations() {
       return (this.actualData || []).map(row => ({
-        id: row[0],
+        id: Number(row[0]),
         label: `${row[0]}, ${row[1]}, ${row[2]}`
       }));
     },
@@ -768,7 +768,15 @@ export default {
       };
     },
     multiChartData() {
-      return this.valuesMulti.map(value => this.getStationDataFromCSV(value));
+      return this.valuesMulti.map(value => {
+        return this.getStationDataFromCSV(
+          this.csvData[this.actualDataName],
+          value,
+          this.actualTable.dates,
+          this.actualTable.columnsToSkip,
+          this.actualTable.needFilter
+        );
+      });
     },
     selectedDateIndex() {
       return this.actualTable.dates.indexOf(this.selectedDate);
@@ -992,6 +1000,14 @@ export default {
         };
       }
     },
+    selectedName() {
+      if (!this.selectedNum) return;
+      const selectedRow = this.actualData.find(
+        row => Number(row[0]) === Number(this.selectedNum)
+      );
+      const [town, name] = [selectedRow[2], selectedRow[3]];
+      return `Номер в таблице ${this.selectedNum}; город - ${town}; название - ${name}`;
+    },
     showLabels() {
       return (
         this.zoom > 8 && !this.showAnimationControl && !this.settedLimitedStyle
@@ -999,7 +1015,6 @@ export default {
     }
   },
   methods: {
-    filter,
     dateToRelative(date) {
       return new Date(
         date - Date.parse(`${date.getFullYear()}-01-01`)
@@ -1278,7 +1293,6 @@ export default {
     },
     setStandartStyle() {
       this.settedLimitedStyle = false;
-      //this.filterText = null;
       this.$nextTick(() => {
         if (this.$refs.geoJson && this.$refs.geoJson.mapObject) {
           this.$refs.geoJson.mapObject.eachLayer(layer => {
@@ -1298,11 +1312,8 @@ export default {
       this.zoom = zoom;
     },
     clearFilter() {
+      this.setStandartStyle();
       this.filterText = "";
-      // this.filter = false;
-      // this.$nextTick(() => {
-      //   this.filter = true;
-      // });
     }
   },
   watch: {
