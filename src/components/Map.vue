@@ -388,7 +388,6 @@ import { LControl, LGeoJson, LMap, LTileLayer } from "vue2-leaflet";
 import { hydroPosts } from "@/assets/gydroPostsLocation";
 import { addHydroPosts } from "@/assets/addGydroPostsLocation";
 import { GTS } from "@/assets/GTS";
-import { filter } from "core-js/internals/array-iteration";
 // import { data } from process.env.BASE_URL+"public/addData.js";
 
 delete Icon.Default.prototype._getIconUrl;
