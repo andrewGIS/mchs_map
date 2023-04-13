@@ -722,7 +722,7 @@ export default {
                 dashStyle: "shortdash",
                 zIndex: 1.5, // Width of the line
                 events: {
-                  mouseover: () =>{
+                  mouseover: () => {
                     this.selectedLevel = `ОЯ от "0" графика поста, ${value.redLimit} см, ${value.name}`;
                   },
                   mouseout: () => {
@@ -744,7 +744,7 @@ export default {
             },
             title: {
               text: "Сроки измерения"
-            },
+            }
             //min: Math.min(...this.actualTable.dates) //7372800000
             //min: 8150400000
             //max: 12938400000
