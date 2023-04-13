@@ -701,13 +701,13 @@ export default {
             plotLines: [
               ...this.multiChartData.map(value => ({
                 color: "blue", // Color value
-                value: value.level1, // Value of where the line will appear
+                value: value.yellowLimit, // Value of where the line will appear
                 width: 2,
                 dashStyle: "shortdash",
                 zIndex: 1.5, // Width of the line
                 events: {
                   mouseover: () => {
-                    this.selectedLevel = `НЯ от "0" графика поста, ${value.level1} см, ${value.name}`;
+                    this.selectedLevel = `НЯ от "0" графика поста, ${value.yellowLimit} см, ${value.name}`;
                   },
                   mouseout: () => {
                     this.selectedLevel = "-";
@@ -717,16 +717,13 @@ export default {
               ...this.multiChartData.map(value => ({
                 color: "red", // Color value
                 //dashStyle: "longdashdot", // Style of the plot line. Default to solid
-                value: value.level2, // Value of where the line will appear
+                value: value.redLimit, // Value of where the line will appear
                 width: 2,
                 dashStyle: "shortdash",
-                // label: {
-                //   text: `ОЯ от "0" графика поста, ${value.level2} см`
-                // },
                 zIndex: 1.5, // Width of the line
                 events: {
-                  mouseover: () => {
-                    this.selectedLevel = `ОЯ от "0" графика поста, ${value.level2} см, ${value.name}`;
+                  mouseover: () =>{
+                    this.selectedLevel = `ОЯ от "0" графика поста, ${value.redLimit} см, ${value.name}`;
                   },
                   mouseout: () => {
                     this.selectedLevel = "-";
@@ -748,7 +745,7 @@ export default {
             title: {
               text: "Сроки измерения"
             },
-            min: Math.min(...this.actualTable.dates) //7372800000
+            //min: Math.min(...this.actualTable.dates) //7372800000
             //min: 8150400000
             //max: 12938400000
             //min: 8150400000,
@@ -760,7 +757,7 @@ export default {
             let date;
             date = new Date(this.x);
             date.setFullYear(2022);
-            return `${new Date(date - 3600 * 5 * 1000).toLocaleString()}:
+            return `${date.toLocaleString()}:
             <br>Уровень воды:<b>${this.y}</b>`;
           }
         }
