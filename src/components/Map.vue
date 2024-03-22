@@ -437,9 +437,18 @@ export default {
           color: "#A0A0A0",
           needFilter: true,
           columnsToSkip: 8
+        },
+        {
+          link:
+              "https://docs.google.com/spreadsheets/d/1_xqq_15G8PnfC2ZNcNmvpU3u-vjbH2PlV4vCaOfDZwo/gviz/tq?tqx=out:csv&range=A6:XE130",
+          name: "r2024Data",
+          dates: this.getDates(new Date(2024, 2, 27), new Date(2024, 4, 28)),
+          color: "#A0A0A0",
+          needFilter: true,
+          columnsToSkip: 8
         }
       ],
-      actualDataName: "r2023Data",
+      actualDataName: "r2024Data",
       filterText: "",
       zoom: 6,
       infoShow: true,
