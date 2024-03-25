@@ -25,7 +25,6 @@ jobs:
         run: |
           npm ci
           export PUBLIC_PATH=/mchs_map
-          npm set strict-ssl false
           npm run stage
           cd dist
           ln -s index.html 404.html
