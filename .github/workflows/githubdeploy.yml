@@ -23,6 +23,7 @@ jobs:
             node-version: '16'
       - name: Build and upload result
         run: |
+          npm i
           export PUBLIC_PATH=/mchs_map
           npm run stage
           cd dist
